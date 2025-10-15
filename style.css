@@ -1,0 +1,96 @@
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+
+form {
+    background-color: #fff;
+    padding: 30px 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 420px;
+}
+
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"] {
+    width: 100%;
+    padding: 12px 15px;
+    margin: 10px 0 20px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border-color 0.2s ease;
+}
+
+input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+
+button[type="submit"],
+.register-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover,
+.register-btn:hover {
+    background-color: #0056b3;
+}
+
+
+.message {
+    color: red;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+
+.link-section {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.link-section a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.link-section a:hover {
+    text-decoration: underline;
+}
