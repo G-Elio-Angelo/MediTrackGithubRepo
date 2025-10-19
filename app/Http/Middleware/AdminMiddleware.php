@@ -8,10 +8,11 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminMiddleware
 {
-    public function handle(Request $request, Closure $next){
+    public function handle(Request $request, Closure $next)
+    {
         if(Auth::check()&&Auth::user()->role === 'admin') {
         return $next($request);
     }
-    return redirect()->route('user.dashboard')->with('error', 'Access denied');
+        abort(403, 'Unauthorized access.');
 }
 }
