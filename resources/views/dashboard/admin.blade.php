@@ -2,12 +2,12 @@
 
 @section('content')
 <div class="container py-4">
-  <h2 class="mb-4 text-center fw-bold">📊 Admin Dashboard</h2>
+    <h2 class="mb-4 text-center fw-bold">Admin Dashboard</h2>
 
-  {{-- ===== SUMMARY CARDS ===== --}}
-  <div class="row g-4 mb-4">
-    <div class="col-md-4">
-      <div class="card shadow-sm text-center p-3 border-0 rounded-4">
+    <!-- Summary Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm text-center p-3 border-0 rounded-4">
         <h5>Total Users</h5>
         <h3 class="text-primary fw-bold">{{ $totalUsers }}</h3>
       </div>
@@ -101,19 +101,23 @@
   }
 </style>
 
-{{-- ===== CHART.JS ===== --}}
+<!-- ChartJS -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<!-- Dashboard Data -->
+<?php
+    $dashboardData = [
+        'userNames' => $userNames,
+        'medicineNames' => $medicineNames,
+        'medicineStocks' => $medicineStocks,
+        'lowStockNames' => $lowStockNames,
+        'lowStockValues' => $lowStockValues
+    ];
+?>
 <script>
-window.dashboardData = {
-  userNames: @json($userNames),
-  medicineNames: @json($medicineNames),
-  medicineStocks: @json($medicineStocks),
-  lowStockNames: @json($lowStockNames),
-  lowStockValues: @json($lowStockValues)
-};
+    window.dashboardData = <?php echo json_encode($dashboardData); ?>;
 </script>
 
+<!-- Custom Dashboard JS -->
 <script src="{{ asset('js/admin-dashboard.js') }}"></script>
-
 @endsection

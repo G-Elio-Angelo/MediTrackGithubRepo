@@ -47,30 +47,37 @@ class AuthController extends Controller
         }
 
     public function verifyOtp(Request $request){
-        $request->validate(['otp'=>'required']);
+        $request->validate(['otp' => 'required']);
         $userId = session('otp_user_id');
 
-        $otp = OtpCode::where('user_id',$userId)
-        ->where('code',$request->otp)
-        ->where('used',false)
-        ->latest()
-        ->first();
-
-        if(!$otp || $otp->isExpired()){
-            return back()->withErrors(['otp'=>'Invalid or expired']);
+        if (!$userId) {
+            return redirect()->route('login')->with('error', 'Session expired. Please login again.');
         }
 
-        $otp->update(['used'=>true]);
+        $otp = OtpCode::where('user_id', $userId)
+            ->where('code', $request->otp)
+            ->where('used', false)
+            ->latest()
+            ->first();
+
+        if (!$otp || $otp->isExpired()) {
+            return back()->withErrors(['otp' => 'Invalid or expired OTP']);
+        }
+
+        $otp->update(['used' => true]);
         $user = User::find($userId);
+        
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'User not found.');
+        }
+
         Auth::login($user);
         session()->forget('otp_user_id');
 
-        if($user->role === 'admin'){
-            return redirect()->route('admin.dashboard');
-        }
-        else{
-        return redirect()->route('user.dashboard');
-    }}
+        $redirectRoute = $user->role === 'admin' ? 'admin.dashboard' : 'user.dashboard';
+        
+        return redirect()->route($redirectRoute)->with('success', 'Login successful!');
+    }
 
     public function showRegister(){
          return view('auth.register'); 
@@ -78,18 +85,23 @@ class AuthController extends Controller
 
     public function register(Request $request){
         $request->validate([
-            'username'=>'required',
-            'email'=>'required|email|unique:users',
-            'password'=>'required|min:6']);
-        $user = User::create([
-            'username'=>$request->username,
-            'email'=>$request->email,
-            'phone_number'=>$request->phone_number,
-            'password'=>Hash::make($request->password),
-            'role' => 'user', //default role
+            'username' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6'
         ]);
+        
+        $user = User::create([
+            'username' => $request->username,
+            'email' => $request->email,
+            'phone_number' => $request->phone_number,
+            'password' => Hash::make($request->password),
+            'role' => 'user'
+        ]);
+        
         Auth::login($user);
-        return redirect()->route('user.dashboard');
+        
+        return redirect()->route($user->role === 'admin' ? 'admin.dashboard' : 'user.dashboard')
+            ->with('success', 'Registration successful!');
     }
 
     public function logout(){ 

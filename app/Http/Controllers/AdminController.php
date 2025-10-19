@@ -54,6 +54,20 @@ class AdminController extends Controller
         return view('dashboard.manage_medicines', compact('medicines'));
     }
 
+    // Update user
+    public function updateUser(Request $request, $id)
+{
+    $user = User::findOrFail($id);
+    $user->update([
+        'username' => $request->username,
+        'email' => $request->email,
+        'phone_number' => $request->phone_number,
+        'role' => $request->role,
+    ]);
+
+    return redirect()->back()->with('success', 'User updated successfully.');
+}
+
     // Delete user
     public function deleteUser($id)
     {
@@ -63,10 +77,39 @@ class AdminController extends Controller
 
     // Delete medicine
     public function deleteMedicine($id)
-    {
-        Medicine::findOrFail($id)->delete();
-        return redirect()->back()->with('success', 'Medicine deleted successfully.');
-    }
-    
+{
+    $medicine = Medicine::findOrFail($id);
+    $medicine->delete();
+
+    return redirect()->route('admin.medicines')->with('success', 'Medicine deleted successfully.');
+}
+
+    // Update medicine
+   public function updateMedicine(Request $request, $id)
+{
+    $medicine = Medicine::findOrFail($id);
+
+    $medicine->update($request->validate([
+        'medicine_name' => 'required|string|max:255',
+        'batch_number' => 'required|string|max:255',
+        'stock' => 'required|integer|min:0',
+        'expiry_date' => 'required|date',
+    ]));
+
+    return redirect()->route('admin.medicines')->with('success', 'Medicine updated successfully.');
+}
+    // Store medicine
+    public function storeMedicine(Request $request)
+{
+    $validated = $request->validate([
+        'medicine_name' => 'required|string|max:255',
+        'batch_number' => 'required|string|max:255',
+        'stock' => 'required|integer|min:0',
+        'expiry_date' => 'required|date',
+    ]);
+    Medicine::create($validated);
+    return redirect()->route('admin.medicines')->with('success', 'Medicine added successfully.');
+}
+
 }
 
