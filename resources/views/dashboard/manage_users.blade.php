@@ -17,6 +17,9 @@
       <tr>
         <th>ID</th>
         <th>Username</th>
+        <th>Fullname</th>
+        <th>Age</th>
+        <th>Address</th>
         <th>Email</th>
         <th>Phone</th>
         <th>Role</th>
@@ -28,6 +31,9 @@
         <tr>
           <td>{{ $user->user_id ?? $user->id }}</td>
           <td>{{ $user->username }}</td>
+          <td>{{ $user->full_name }}</td>
+          <td>{{ $user->age }}</td>
+          <td>{{ $user->address }}</td>
           <td>{{ $user->email }}</td>
           <td>{{ $user->phone_number }}</td>
           <td>{{ ucfirst($user->role) }}</td>
@@ -68,6 +74,28 @@
                     <label class="form-label">Username</label>
                     <input type="text" name="username" class="form-control" value="{{ $user->username }}" required>
                   </div>
+                  <div class="row">
+                    <div class="col-md-4 mb-3">
+                      <label class="form-label">First name</label>
+                      <input type="text" name="first_name" class="form-control" value="{{ $user->first_name }}" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                      <label class="form-label">Middle name</label>
+                      <input type="text" name="middle_name" class="form-control" value="{{ $user->middle_name }}">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                      <label class="form-label">Last name</label>
+                      <input type="text" name="last_name" class="form-control" value="{{ $user->last_name }}" required>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Age</label>
+                    <input type="number" name="age" class="form-control" value="{{ $user->age }}" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Address</label>
+                    <input type="text" name="address" class="form-control" value="{{ $user->address }}" required>
+                  </div>
                   <div class="mb-3">
                     <label class="form-label">Email</label>
                     <input type="email" name="email" class="form-control" value="{{ $user->email }}" required>
@@ -82,6 +110,22 @@
                       <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Admin</option>
                       <option value="user" {{ $user->role === 'user' ? 'selected' : '' }}>User</option>
                     </select>
+                  </div>
+                  <hr>
+                  <h6 class="mb-2">Assign Medicine Intake (optional)</h6>
+                  <div class="mb-3">
+                    <label class="form-label">Medicine</label>
+                    <select name="medicine_id" class="form-select">
+                      <option value="">-- None --</option>
+                      @foreach($medicines as $medicine)
+                        <option value="{{ $medicine->id }}">{{ $medicine->medicine_name }}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Intake time</label>
+                    <input type="datetime-local" name="intake_time" class="form-control">
+                    <small class="form-text text-muted">Optional: set when the user should take the selected medicine.</small>
                   </div>
                 </div>
                 <div class="modal-footer">

@@ -16,7 +16,7 @@ class MedicineController extends Controller
 
     // daily check for alerts
     public function runAlertChecks(SmsService $sms){
-        $low = Medicine::where('stock','<',10)->get();
+        $low = Medicine::where('stock','=<',10)->get();
         foreach($low as $m){
             $sms->send(env('ADMIN_PHONE'), "Low stock alert: {$m->medicine_name} ({$m->stock} left)");
         }

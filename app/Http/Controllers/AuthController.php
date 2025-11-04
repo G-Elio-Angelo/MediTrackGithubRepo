@@ -8,15 +8,31 @@ use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use App\Services\SmsService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
-    public function showLogin(){
-        
-        return view('auth.login'); }
+    public function showLogin()
+    {
+        if (!session()->isStarted()) {
+            session()->start();
+        }
+        session()->regenerateToken();
+
+        return view('auth.login');
+    }
 
     public function loginStep(Request $request, SmsService $sms)
     {
+        // Log debug info to diagnose CSRF/session issues
+        Log::info('loginStep debug start', [
+            'has_token' => $request->has('_token'),
+            'request_token' => $request->_token ?? null,
+            'session_token' => session()->token(),
+            'session_id' => session()->getId(),
+            'ip' => $request->ip(),
+        ]);
+
         $request->validate([
             'email'=>'required|email',
             'password'=>'required']);
@@ -34,8 +50,12 @@ class AuthController extends Controller
             'code'=>$code,
             'expires_at'=>Carbon::now()->addMinutes(5),
         ]);
+        $sendResult = null;
         if($user->phone_number){
-        $sms->send($user->phone_number, "Your MediTrack OTP is: {$code}");
+            $sendResult = $sms->send($user->phone_number, "Your MediTrack OTP is: {$code}");
+        }
+        if (is_array($sendResult) && isset($sendResult['provider']) && $sendResult['provider'] === 'local-log') {
+            session()->flash('debug_otp', $code);
         }
 
         session(['otp_user_id'=>$user->user_id]);
@@ -84,24 +104,33 @@ class AuthController extends Controller
         }
 
     public function register(Request $request){
-        $request->validate([
-            'username' => 'required',
-            'email' => 'required|email|unique:users',
+        $validated = $request->validate([
+            'username' => 'required|string|max:255|unique:users,username',
+            'first_name' => 'required|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'age' => 'nullable|integer|min:0',
+            'address' => 'nullable|string|max:1000',
+            'email' => 'required|email|unique:users,email',
+            'phone_number' => 'nullable|string|max:50',
             'password' => 'required|min:6'
         ]);
-        
+
         $user = User::create([
-            'username' => $request->username,
-            'email' => $request->email,
-            'phone_number' => $request->phone_number,
-            'password' => Hash::make($request->password),
+            'username' => $validated['username'],
+            'first_name' => $validated['first_name'],
+            'middle_name' => $validated['middle_name'] ?? null,
+            'last_name' => $validated['last_name'],
+            'age' => $validated['age'] ?? null,
+            'address'=> $validated['address'] ?? null,
+            'email' => $validated['email'],
+            'phone_number' => $validated['phone_number'] ?? null,
+            'password' => Hash::make($validated['password']),
             'role' => 'user'
         ]);
         
-        Auth::login($user);
-        
-        return redirect()->route($user->role === 'admin' ? 'admin.dashboard' : 'user.dashboard')
-            ->with('success', 'Registration successful!');
+        // Do NOT auto-login after registration; require the user to login so OTP flow works.
+        return redirect()->route('login')->with('success', 'Registration successful! Please log in.');
     }
 
     public function logout(){ 

@@ -18,7 +18,7 @@ Route::post('register', [AuthController::class, 'register'])->name('register.pos
 
 // --- ADMIN ROUTES ---
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
-    Route::put('admin/users/{id}', [AdminController::class, 'updateUser'])->name('admin.users.update');
+    // Correct update route will be defined below (avoid duplicate admin prefix)
     Route::get('/dashboard', [AdminController::class, 'admindashb'])->name('admin.dashboard');
     Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
     Route::delete('/users/{id}', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
@@ -37,6 +37,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 // --- USER ROUTES ---
 Route::middleware(['auth'])->prefix('user')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('user.dashboard');
+    Route::post('/intake/{id}/confirm', [DashboardController::class, 'confirmIntake'])->name('user.intake.confirm');
     Route::resource('medicines', MedicineController::class);
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 });

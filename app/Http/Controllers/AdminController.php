@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Medicine;
+use App\Models\MedicineIntake;
 use App\Services\SmsService;
 use Illuminate\Support\Facades\Auth;
 
@@ -44,7 +45,8 @@ class AdminController extends Controller
     public function users()
     {
         $users = User::all();
-        return view('dashboard.manage_users', compact('users'));
+        $medicines = Medicine::all();
+        return view('dashboard.manage_users', compact('users', 'medicines'));
     }
 
     // Manage medicines
@@ -56,17 +58,50 @@ class AdminController extends Controller
 
     // Update user
     public function updateUser(Request $request, $id)
-{
-    $user = User::findOrFail($id);
-    $user->update([
-        'username' => $request->username,
-        'email' => $request->email,
-        'phone_number' => $request->phone_number,
-        'role' => $request->role,
-    ]);
+    {
+        $user = User::findOrFail($id);
 
-    return redirect()->back()->with('success', 'User updated successfully.');
-}
+        $validated = $request->validate([
+            'username' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'age' => 'nullable|integer|min:0',
+            'address' => 'nullable|string|max:1000',
+            'email' => 'required|email|max:255',
+            'phone_number' => 'nullable|string|max:50',
+            'role' => 'required|string|in:admin,user',
+        ]);
+
+        $user->username = $validated['username'];
+        $user->first_name = $validated['first_name'];
+        $user->middle_name = $validated['middle_name'] ?? null;
+        $user->last_name = $validated['last_name'];
+        $user->age = $validated['age'] ?? null;
+        $user->address = $validated['address'] ?? null;
+        $user->email = $validated['email'];
+        $user->phone_number = $validated['phone_number'] ?? null;
+        $user->role = $validated['role'];
+
+        $user->save();
+
+        // Optionally assign a medicine intake for the user (admin can set medicine + intake time)
+        if ($request->filled('medicine_id') && $request->filled('intake_time')) {
+            $miValidated = $request->validate([
+                'medicine_id' => 'required|exists:medicines,id',
+                'intake_time' => 'required|date',
+            ]);
+
+            MedicineIntake::create([
+                'user_id' => $user->user_id,
+                'medicine_id' => $miValidated['medicine_id'],
+                'intake_time' => $miValidated['intake_time'],
+                'status' => false,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'User updated successfully.');
+    }
 
     // Delete user
     public function deleteUser($id)

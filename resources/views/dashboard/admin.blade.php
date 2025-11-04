@@ -42,7 +42,7 @@
         <h6 class="mt-4 fw-bold">List of Users:</h6>
         <ul>
           @foreach($users as $u)
-            <li>{{ $u->username }} - {{ $u->email }}</li>
+            <li>{{ "Username - " . $u->username }} , {{"Email - ". $u->email }} , {{"Phone Number - ". $u->phone_number }}</li>
           @endforeach
         </ul>
       </div>
@@ -71,20 +71,44 @@
     </div>
 
     {{-- === LOW STOCK CHART === --}}
-    <div class="col-md-12">
-      <div class="card shadow-sm p-4 border-0 rounded-4">
-        <h5 class="text-center mb-3 fw-semibold text-danger">Low Stock Alerts</h5>
-        <canvas id="lowStockChart" height="100"></canvas>
-        <h6 class="mt-4 fw-bold">Medicines Running Low:</h6>
-        <ul>
-          @forelse($lowStock as $l)
-            <li class="text-danger">{{ $l->medicine_name }} — {{ $l->stock }} left</li>
-          @empty
-            <li class="text-success">✅ All medicines have sufficient stock.</li>
-          @endforelse
-        </ul>
+<div class="col-md-12">
+  <div class="card shadow-sm p-4 border-0 rounded-4">
+    <h5 class="text-center mb-3 fw-semibold text-danger">Low Stock Alerts</h5>
+    <canvas id="lowStockChart" height="100"></canvas>
+
+    <h6 class="mt-4 fw-bold">Medicines Running Low:</h6>
+
+    @if($lowStock->isNotEmpty())
+      <table class="table table-bordered table-striped align-middle text-center">
+        <thead class="table-danger">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Medicine Name</th>
+            <th scope="col">Batch Number</th>
+            <th scope="col">Stock Left</th>
+            <th scope="col">Expiry Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach($lowStock as $index => $l)
+            <tr>
+              <td>{{ $index + 1 }}</td>
+              <td>{{ $l->medicine_name }}</td>
+              <td>{{ $l->batch_number ?? 'N/A' }}</td>
+              <td class="text-danger fw-bold">{{ $l->stock }}</td>
+              <td>{{ $l->expiry_date ?? 'N/A' }}</td>
+            </tr>
+          @endforeach
+        </tbody>
+      </table>
+    @else
+      <div class="alert alert-success text-center mt-3" role="alert">
+        ✅ All medicines have sufficient stock.
       </div>
-    </div>
+    @endif
+  </div>
+</div>
+
   </div>
 </div>
 
@@ -99,6 +123,15 @@
   .card h5 {
     font-weight: 600;
   }
+  .table-danger th {
+  background-color: #f8d7da !important;
+  color: #842029;
+}
+
+.table td, .table th {
+  vertical-align: middle;
+}
+
 </style>
 
 <!-- ChartJS -->

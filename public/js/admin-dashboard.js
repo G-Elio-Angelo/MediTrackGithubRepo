@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
       },
       scales: {
-        y: { beginAtZero: true, title: { display: true, text: 'Quantity Left' } }
+        y: { beginAtZero: true, title: { display: true, text: 'Quantity' } }
       }
     }
   });

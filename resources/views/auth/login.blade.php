@@ -2,9 +2,8 @@
 
 
 @section('content')
-<div class="container d-flex justify-content-center align-items-center" style="min-height:80vh">
-  <div class="col-md-6">
-    <div class="card shadow p-4">
+<div class="glass-container d-flex justify-content-center align-items-center">
+  <div class="card shadow p-4 login-card">
       <h3 class="mb-3 text-center">Login to MediTrack</h3>
 
       @if($errors->any())
@@ -32,7 +31,6 @@
         <a href="{{ route('register') }}">Don't have an account? Register</a>
       </div>
     </div>
-  </div>
 </div>
 @endsection
 

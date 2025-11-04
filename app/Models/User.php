@@ -6,6 +6,12 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable {
     use Notifiable;
     protected $primaryKey = 'user_id';
-    protected $fillable = ['username','email','phone_number','password','role'];
+    protected $fillable = ['username','first_name','middle_name','last_name','age','address','email','phone_number','password','role'];
     protected $hidden = ['password','remember_token'];
+
+    // Accessor for full name
+    public function getFullNameAttribute()
+    {
+        return trim((($this->first_name ?? '') . ' ' . ($this->middle_name ?? '') . ' ' . ($this->last_name ?? '')));
+    }
 }
