@@ -9,6 +9,8 @@ use Carbon\Carbon;
 use App\Services\SmsService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request as HttpRequest;
+use Illuminate\Support\Facades\Cookie;
 
 class AuthController extends Controller
 {
@@ -133,6 +135,20 @@ class AuthController extends Controller
         return redirect()->route('login')->with('success', 'Registration successful! Please log in.');
     }
 
-    public function logout(){ 
-        Auth::logout(); return redirect()->route('login'); }
+    public function logout(HttpRequest $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        // Optionally delete all cookies - commented out so you can enable later.
+        // $cookies = $request->cookies->all();
+        // foreach ($cookies as $name => $value) {
+        //     // Queue cookie deletion
+        //     Cookie::queue(Cookie::forget($name));
+        // }
+
+        return redirect()->route('login');
+    }
 }

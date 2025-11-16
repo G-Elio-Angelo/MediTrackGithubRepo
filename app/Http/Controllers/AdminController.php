@@ -6,11 +6,13 @@ use App\Models\User;
 use App\Models\Medicine;
 use App\Models\MedicineIntake;
 use App\Services\SmsService;
+use App\Services\MailService;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
-    public function admindashb(SmsService $sms)
+    public function admindashb(SmsService $sms, MailService $mailService)
     {
         $users = User::all();
         $totalUsers = $users->count();
@@ -21,11 +23,39 @@ class AdminController extends Controller
         $lowStock = Medicine::where('stock', '<', 10)->get();
         $lowStockCount = $lowStock->count();
 
-        if($lowStockCount > 0 && Auth::check()){
+        if ($lowStockCount > 0 && Auth::check()) {
             $admin = Auth::user();
             $lowStockList = $lowStock->pluck('medicine_name')->implode(', ');
-            $message = " Low stock alert! \nThe following medicine are running low: {$lowStockList},";
-            $sms->send($admin->phone_number, $message);
+            $message = "Low stock alert!\nThe following medicine are running low: {$lowStockList}";
+
+            // Send SMS (existing behavior)
+            try {
+                $sms->send($admin->phone_number, $message);
+            } catch (\Throwable $e) {
+                Log::error('Failed to send low-stock SMS', ['error' => $e->getMessage()]);
+            }
+
+            // Send email to configured admin address (prefer env ADMIN_EMAIL, fallback to authenticated user)
+            try {
+                // Prefer the currently authenticated user's email as the recipient.
+                // Fallback to ADMIN_EMAIL if the user's email is not available.
+                $recipient = $admin->email ?? env('ADMIN_EMAIL', null);
+
+                if (!empty($recipient)) {
+                    $subject = 'Low stock alert: ' . ($lowStockCount > 1 ? "{$lowStockCount} medicines" : $lowStockList);
+                    $content = "<p>Low stock alert!</p><p>The following medicine are running low:</p><ul>";
+                    foreach ($lowStock as $l) {
+                        $content .= "<li>" . e($l->medicine_name) . " — " . e($l->stock) . " left</li>";
+                    }
+                    $content .= "</ul><p>Please restock as soon as possible.</p>";
+
+                    $mailService->sendEmail($recipient, $subject, $content);
+                } else {
+                    Log::warning('No admin email configured; low-stock email not sent', ['user_id' => Auth::id()]);
+                }
+            } catch (\Throwable $e) {
+                Log::error('Failed to send low-stock email', ['error' => $e->getMessage()]);
+            }
         }
         $userNames = $users->pluck('username')->values();
         $medicineNames =  $medicines->pluck('medicine_name')->values();

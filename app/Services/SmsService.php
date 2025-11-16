@@ -15,8 +15,6 @@ class SmsService
     {
         $this->apiToken = env('IPROG_API_TOKEN');
         $this->baseUrl = 'https://sms.iprogtech.com/api/v1';
-        // When true, SmsService will not call external provider and will only log messages.
-        // Useful for local development or when provider token is missing/invalid.
         $this->fakeMode = env('SMS_FAKE', config('app.env') === 'local');
     }
 
@@ -25,7 +23,6 @@ class SmsService
      */
    public function sendSMS($phoneNumber, $message)
 {
-    // If running in fake mode or no api token configured, don't call external provider.
     if ($this->fakeMode || empty($this->apiToken)) {
         $formattedPhone = $this->formatPhoneNumber($phoneNumber);
         Log::info('[SMS - FAKE MODE] Sending SMS (simulated)', [

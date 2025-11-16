@@ -2,7 +2,16 @@
 
 @section('content')
 <div class="container py-4">
-    <h2 class="mb-4 text-center fw-bold">Admin Dashboard</h2>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0 fw-bold">Admin Dashboard</h2>
+    {{-- Logout button visible on dashboard for convenience --}}
+    @auth
+    <form method="POST" action="{{ route('logout') }}">
+      @csrf
+      <button type="submit" class="btn btn-outline-secondary">Logout</button>
+    </form>
+    @endauth
+  </div>
 
     <!-- Summary Cards -->
     <div class="row g-4 mb-4">

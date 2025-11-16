@@ -19,8 +19,16 @@
     <!-- Main content -->
     <div class="col-md-9">
       <div class="card">
-        <div class="card-body">
-          <h4 class="card-title">Medications to intake</h4>
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h4 class="card-title mb-0">Medications to intake</h4>
+              @auth
+              <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
+              </form>
+              @endauth
+            </div>
 
           @if(session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
