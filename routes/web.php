@@ -29,6 +29,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::post('/medicines', [AdminController::class, 'storeMedicine'])->name('admin.medicines.store');
     Route::put('/medicines/{id}', [AdminController::class, 'updateMedicine'])->name('admin.medicines.update');
     Route::delete('/medicines/{id}', [AdminController::class, 'deleteMedicine'])->name('admin.medicines.delete');
+    Route::post('/intake', [AdminController::class, 'storeIntake'])->name('admin.intake.store');
+    Route::post('/medicines/{id}/return', [AdminController::class, 'returnMedicine'])->name('admin.medicines.return');
+    Route::get('/intakes', [AdminController::class, 'intakes'])->name('admin.intakes');
+    Route::get('/intakes/{id}/edit', [AdminController::class, 'editIntake'])->name('admin.intakes.edit');
+    Route::put('/intakes/{id}', [AdminController::class, 'updateIntake'])->name('admin.intakes.update');
+    Route::delete('/intakes/{id}', [AdminController::class, 'deleteIntake'])->name('admin.intakes.delete');
 
     Route::get('/test-admin', function() {
         return 'Admin middleware works!';
@@ -39,5 +45,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 Route::middleware(['auth'])->prefix('user')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('user.dashboard');
     Route::post('/intake/{id}/confirm', [DashboardController::class, 'confirmIntake'])->name('user.intake.confirm');
+    Route::post('/intake/{id}/return', [DashboardController::class, 'returnIntake'])->name('user.intake.return');
     Route::resource('medicines', MedicineController::class);
 });

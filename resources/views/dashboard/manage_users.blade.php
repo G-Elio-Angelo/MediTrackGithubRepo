@@ -111,22 +111,7 @@
                       <option value="user" {{ $user->role === 'user' ? 'selected' : '' }}>User</option>
                     </select>
                   </div>
-                  <hr>
-                  <h6 class="mb-2">Assign Medicine Intake (optional)</h6>
-                  <div class="mb-3">
-                    <label class="form-label">Medicine</label>
-                    <select name="medicine_id" class="form-select">
-                      <option value="">-- None --</option>
-                      @foreach($medicines as $medicine)
-                        <option value="{{ $medicine->id }}">{{ $medicine->medicine_name }}</option>
-                      @endforeach
-                    </select>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Intake time</label>
-                    <input type="datetime-local" name="intake_time" class="form-control">
-                    <small class="form-text text-muted">Optional: set when the user should take the selected medicine.</small>
-                  </div>
+                  <!-- Intake assignment removed from Manage Users. Use Manage Intakes page to assign medicine intakes. -->
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
