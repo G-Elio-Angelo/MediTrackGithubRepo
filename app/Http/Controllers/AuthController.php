@@ -96,6 +96,8 @@ class AuthController extends Controller
         Auth::login($user);
         session()->forget('otp_user_id');
 
+        \App\Services\ActivityLogger::log('user.login', ['user_id' => $user->user_id]);
+
         $redirectRoute = $user->role === 'admin' ? 'admin.dashboard' : 'user.dashboard';
         
         return redirect()->route($redirectRoute)->with('success', 'Login successful!');
@@ -131,12 +133,17 @@ class AuthController extends Controller
             'role' => 'user'
         ]);
         
-        // Do NOT auto-login after registration; require the user to login so OTP flow works.
+        // Activity log: user registration
+        \App\Services\ActivityLogger::log('user.registered', ['user_id' => $user->user_id]);
+
         return redirect()->route('login')->with('success', 'Registration successful! Please log in.');
     }
 
     public function logout(HttpRequest $request)
     {
+        $userId = Auth::id();
+        \App\Services\ActivityLogger::log('user.logout', ['user_id' => $userId]);
+
         Auth::logout();
 
         $request->session()->invalidate();

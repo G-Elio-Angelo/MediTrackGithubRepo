@@ -26,6 +26,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::put('/users/{id}', [AdminController::class, 'updateUser'])->name('admin.users.update');
     
     Route::get('/medicines', [AdminController::class, 'medicines'])->name('admin.medicines');
+    Route::get('/logs', [AdminController::class, 'activityLogs'])->name('admin.logs');
+    Route::get('/logs/data', [AdminController::class, 'activityLogsData'])->name('admin.logs.data');
     Route::post('/medicines', [AdminController::class, 'storeMedicine'])->name('admin.medicines.store');
     Route::put('/medicines/{id}', [AdminController::class, 'updateMedicine'])->name('admin.medicines.update');
     Route::delete('/medicines/{id}', [AdminController::class, 'deleteMedicine'])->name('admin.medicines.delete');

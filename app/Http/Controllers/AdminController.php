@@ -8,6 +8,7 @@ use App\Models\MedicineIntake;
 use App\Models\MedicineReturn;
 use App\Models\Setting;
 use App\Services\SmsService;
+use App\Services\ActivityLogger;
 use App\Services\MailService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +22,6 @@ class AdminController extends Controller
         $users = User::all();
         $totalUsers = $users->count();
         
-        // Aggregate medicines by name: sum stock and take nearest expiry (minimum expiry_date)
         $medicines = Medicine::selectRaw('medicine_name, SUM(stock) as stock, MIN(expiry_date) as expiry_date')
             ->groupBy('medicine_name')
             ->get();
@@ -205,6 +205,15 @@ class AdminController extends Controller
                 'quantity' => $qty,
             ]);
 
+            // Log activity
+            ActivityLogger::log('intake.scheduled', [
+                'intake_id' => $intake->id,
+                'user_id' => $user->user_id,
+                'medicine_id' => $medicine->id,
+                'quantity' => $qty,
+                'intake_time' => $validated['intake_time'],
+            ]);
+
             // Decrement stock
             $medicine->stock = max(0, $medicine->stock - $qty);
             $medicine->save();
@@ -236,6 +245,124 @@ class AdminController extends Controller
         // include recent returns for display
         $returns = MedicineReturn::with('medicine')->orderBy('returned_at','desc')->get();
         return view('dashboard.manage_medicines', compact('medicines','returns'));
+    }
+
+    public function storeMedicine(Request $request)
+    {
+        $validated = $request->validate([
+            'medicine_name' => 'required|string|max:255',
+            'batch_number' => 'required|string|max:255',
+            'supplier_name' => 'nullable|string|max:255',
+            'intake_interval_minutes' => 'nullable|integer|min:1|max:1440',
+            'stock' => 'required|integer|min:0',
+            'expiry_date' => 'required|date',
+        ]);
+
+        $medicine = Medicine::create($validated);
+
+        ActivityLogger::log('medicine.created', [
+            'medicine_id' => $medicine->id,
+            'name' => $medicine->medicine_name,
+        ]);
+
+        return redirect()->route('admin.medicines')->with('success', 'Medicine added successfully.');
+    }
+
+    public function updateMedicine(Request $request, $id)
+    {
+        $medicine = Medicine::findOrFail($id);
+
+        $validated = $request->validate([
+            'medicine_name' => 'required|string|max:255',
+            'batch_number' => 'required|string|max:255',
+            'supplier_name' => 'nullable|string|max:255',
+            'intake_interval_minutes' => 'nullable|integer|min:1|max:1440',
+            'stock' => 'required|integer|min:0',
+            'expiry_date' => 'required|date',
+        ]);
+
+        $medicine->update($validated);
+
+        ActivityLogger::log('medicine.updated', [
+            'medicine_id' => $medicine->id,
+        ]);
+
+        return redirect()->route('admin.medicines')->with('success', 'Medicine updated successfully.');
+    }
+
+    public function deleteMedicine($id)
+    {
+        $medicine = Medicine::findOrFail($id);
+        $medicine->delete();
+
+        ActivityLogger::log('medicine.deleted', ['medicine_id' => $id]);
+
+        return redirect()->route('admin.medicines')->with('success', 'Medicine deleted successfully.');
+    }
+
+    // Activity logs page
+    public function activityLogs()
+    {
+        // Load all logs for display; DataTables will handle client-side paging/sorting
+        return view('dashboard.activity_logs');
+    }
+
+    public function activityLogsData(Request $request)
+    {
+        $draw = (int)$request->input('draw', 0);
+        $start = (int)$request->input('start', 0);
+        $length = (int)$request->input('length', 10);
+        $search = $request->input('search.value', '');
+
+        $query = \App\Models\ActivityLog::with('user');
+
+        $recordsTotal = $query->count();
+
+        if (!empty($search)) {
+            $query = $query->where(function($q) use ($search) {
+                $q->where('action', 'like', "%{$search}%")
+                  ->orWhere('ip_address', 'like', "%{$search}%")
+                  ->orWhere('meta', 'like', "%{$search}%")
+                  ->orWhereHas('user', function($uq) use ($search) {
+                      $uq->where('username', 'like', "%{$search}%")
+                         ->orWhere('first_name', 'like', "%{$search}%")
+                         ->orWhere('last_name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $recordsFiltered = $query->count();
+
+        // ordering
+        $orderColIndex = $request->input('order.0.column', 0);
+        $orderDir = $request->input('order.0.dir', 'desc');
+        $columns = ['id', 'user_id', 'action', 'meta', 'ip_address', 'created_at'];
+        $orderCol = $columns[$orderColIndex] ?? 'created_at';
+        if ($orderCol === 'user_id') {
+            $query = $query->orderBy('user_id', $orderDir);
+        } else {
+            $query = $query->orderBy($orderCol, $orderDir);
+        }
+
+        $data = $query->skip($start)->take($length)->get();
+
+        $rows = $data->map(function($log) {
+            return [
+                'id' => $log->id,
+                'user' => $log->user ? ($log->user->full_name ?? $log->user->username) : 'System',
+                'action' => $log->action,
+                'meta' => json_encode($log->meta ?? [], JSON_UNESCAPED_UNICODE),
+                'ip_address' => $log->ip_address ?? '—',
+                'created_at' => $log->created_at ? $log->created_at->format('Y-m-d H:i') : '',
+            ];
+        })->values();
+
+        return response()->json([
+            'draw' => $draw,
+            'recordsTotal' => $recordsTotal,
+            'recordsFiltered' => $recordsFiltered,
+            'data' => $rows,
+        ]);
     }
 
     // List medicine intakes (admin view)
@@ -281,6 +408,13 @@ class AdminController extends Controller
         $intake->status = $validated['status'] ?? false;
         $intake->save();
 
+        ActivityLogger::log('intake.updated', [
+            'intake_id' => $intake->id,
+            'user_id' => $intake->user_id,
+            'medicine_id' => $intake->medicine_id,
+            'intake_time' => $intake->intake_time,
+        ]);
+
         // If an intake_interval_minutes was submitted in the edit form, update the medicine's interval
         if ($request->filled('intake_interval_minutes')) {
             $mi = Medicine::find($validated['medicine_id']);
@@ -297,6 +431,7 @@ class AdminController extends Controller
     public function deleteIntake($id)
     {
         $intake = MedicineIntake::findOrFail($id);
+        ActivityLogger::log('intake.deleted', ['intake_id' => $intake->id, 'user_id' => $intake->user_id, 'medicine_id' => $intake->medicine_id]);
         $intake->delete();
         return redirect()->route('admin.intakes')->with('success', 'Intake deleted successfully.');
     }
@@ -330,6 +465,8 @@ class AdminController extends Controller
 
         $user->save();
 
+        ActivityLogger::log('user.updated', ['user_id' => $user->user_id]);
+
         if ($request->filled('medicine_id') && $request->filled('intake_time')) {
             $miValidated = $request->validate([
                 'medicine_id' => 'required|exists:medicines,id',
@@ -342,6 +479,8 @@ class AdminController extends Controller
                 'intake_time' => $miValidated['intake_time'],
                 'status' => false,
             ]);
+
+            ActivityLogger::log('intake.scheduled_by_admin', ['user_id' => $user->user_id, 'medicine_id' => $miValidated['medicine_id'], 'intake_time' => $miValidated['intake_time']]);
         }
 
         return redirect()->back()->with('success', 'User updated successfully.');
@@ -350,49 +489,13 @@ class AdminController extends Controller
     // Delete user
     public function deleteUser($id)
     {
-        User::findOrFail($id)->delete();
+        $u = User::findOrFail($id);
+        ActivityLogger::log('user.deleted', ['user_id' => $u->user_id]);
+        $u->delete();
         return redirect()->back()->with('success', 'User deleted successfully.');
     }
 
-    // Delete medicine
-    public function deleteMedicine($id)
-{
-    $medicine = Medicine::findOrFail($id);
-    $medicine->delete();
-
-    return redirect()->route('admin.medicines')->with('success', 'Medicine deleted successfully.');
-}
-
-    // Update medicine
-   public function updateMedicine(Request $request, $id)
-{
-    $medicine = Medicine::findOrFail($id);
-
-    $medicine->update($request->validate([
-        'medicine_name' => 'required|string|max:255',
-        'batch_number' => 'required|string|max:255',
-        'supplier_name' => 'nullable|string|max:255',
-        'intake_interval_minutes' => 'nullable|integer|min:1|max:1440',
-        'stock' => 'required|integer|min:0',
-        'expiry_date' => 'required|date',
-    ]));
-
-    return redirect()->route('admin.medicines')->with('success', 'Medicine updated successfully.');
-}
-    // Store medicine
-    public function storeMedicine(Request $request)
-{
-    $validated = $request->validate([
-        'medicine_name' => 'required|string|max:255',
-        'batch_number' => 'required|string|max:255',
-        'supplier_name' => 'nullable|string|max:255',
-        'intake_interval_minutes' => 'nullable|integer|min:1|max:1440',
-        'stock' => 'required|integer|min:0',
-        'expiry_date' => 'required|date',
-    ]);
-    Medicine::create($validated);
-    return redirect()->route('admin.medicines')->with('success', 'Medicine added successfully.');
-}
+    
 
     // Record a medicine return and optionally adjust inventory
     public function returnMedicine(Request $request, $id)
@@ -431,6 +534,12 @@ class AdminController extends Controller
             DB::commit();
 
             Log::info('Medicine return recorded', ['return_id' => $mr->id, 'medicine_id' => $medicine->id, 'action' => $validated['action'], 'qty' => $validated['quantity']]);
+            ActivityLogger::log('medicine.returned', [
+                'return_id' => $mr->id,
+                'medicine_id' => $medicine->id,
+                'action' => $validated['action'],
+                'quantity' => $validated['quantity'],
+            ]);
             return redirect()->route('admin.medicines')->with('success', 'Medicine return recorded.');
         } catch (\Throwable $e) {
             DB::rollBack();

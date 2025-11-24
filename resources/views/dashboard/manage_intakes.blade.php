@@ -27,7 +27,7 @@
     </div>
   @endif
 
-  <table class="table table-striped table-hover align-middle">
+  <table class="table datatable table-striped table-hover align-middle">
     <thead class="table-dark">
       <tr>
         <th>ID</th>

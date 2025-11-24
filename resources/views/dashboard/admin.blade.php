@@ -15,24 +15,29 @@
 
     <!-- Summary Cards -->
     <div class="row g-4 mb-4">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card shadow-sm text-center p-3 border-0 rounded-4">
         <h5>Total Users</h5>
         <h3 class="text-primary fw-bold">{{ $totalUsers }}</h3>
       </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
       <div class="card shadow-sm text-center p-3 border-0 rounded-4">
         <h5>Total Medicines</h5>
         <h3 class="text-success fw-bold">{{ $totalMedicines }}</h3>
       </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
       <div class="card shadow-sm text-center p-3 border-0 rounded-4">
         <h5>Low Stock Medicines</h5>
         <h3 class="text-danger fw-bold">{{ $lowStockCount }}</h3>
       </div>
     </div>
+    <div class="col-md-3">
+      <div class="card shadow-sm text-center p-3 border-0 rounded-4">
+        <h5>Medicine Expiring</h5>
+        <h3 class="text-warning fw-bold">{{ isset($nearExpiry) ? $nearExpiry->count() : 0 }}</h3>
+      </div>
   </div>
 
   {{-- ===== MANAGEMENT BUTTONS ===== --}}
@@ -40,6 +45,7 @@
     <a href="{{ route('admin.users') }}" class="btn btn-primary m-2 px-4 py-2 rounded-3 shadow-sm">👥 Manage Users</a>
     <a href="{{ route('admin.medicines') }}" class="btn btn-success m-2 px-4 py-2 rounded-3 shadow-sm">💊 Manage Medicines</a>
     <a href="{{ route('admin.intakes') }}" class="btn btn-warning m-2 px-4 py-2 rounded-3 shadow-sm">📋 Manage Patient Intakes</a>
+    <a href="{{ route('admin.logs') }}" class="btn btn-secondary m-2 px-4 py-2 rounded-3 shadow-sm">📝 Activity Logs</a>
   </div>
 
   {{-- ===== CHARTS SECTION ===== --}}
@@ -53,7 +59,7 @@
         <canvas id="medicineChart" height="100"></canvas>
         </div>
         <h6 class="mt-4 fw-bold">List of Medicines:</h6>
-        <table class="table table-sm table-striped align-middle">
+        <table id="MedicineList" class="table datatable table-sm table-striped align-middle">
           <thead class="table-light">
             <tr>
             <th>Name</th>
@@ -83,7 +89,7 @@
           </div>
           <h6 class="mt-4 fw-bold">Medicines Nearing Expiry:</h6>
           @if(isset($nearExpiry) && $nearExpiry->isNotEmpty())
-            <table class="table table-sm table-striped align-middle">
+            <table class="table datatable table-sm table-striped align-middle">
               <thead class="table-light">
                 <tr>
                   <th>Name</th>
@@ -115,7 +121,7 @@
     <h6 class="mt-4 fw-bold">Medicines Running Low:</h6>
 
     @if($lowStock->isNotEmpty())
-      <table class="table table-bordered table-striped align-middle text-center">
+    <table id="LowMedicine" class="table datatable table-bordered table-striped align-middle text-center">
         <thead class="table-danger">
           <tr>
             <th scope="col">#</th>

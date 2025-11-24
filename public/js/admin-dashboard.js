@@ -7,8 +7,6 @@ document.addEventListener("DOMContentLoaded", function() {
   const nearExpiryNames = window.dashboardData.nearExpiryNames || [];
   const nearExpiryDates = window.dashboardData.nearExpiryDates || [];
 
-  // User distribution chart removed — focusing on medicine visuals only.
-
   // MEDICINE CHART - Horizontal bar with percentage and clickable bars to reveal expiry
   const medCtx = document.getElementById('medicineChart');
   const medicineColors = medicineStocks.map(value => {
@@ -31,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function() {
       }]
     },
     options: {
-      indexAxis: 'y',
+      indexAxis: 'x',
       responsive: true,
       plugins: {
         title: { display: true, text: 'Medicine Stock Levels', font: { size: 16 } },
@@ -48,7 +46,8 @@ document.addEventListener("DOMContentLoaded", function() {
         }
       },
       scales: {
-        x: { beginAtZero: true, title: { display: true, text: 'Stock Quantity' } }
+        y: { beginAtZero: true, title: { display: true, text: 'Stock Quantity' } },
+        x: { title: { display: true, text: 'Medicine' } }
       },
       onClick: (evt, activeEls) => {
         const points = medChart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, false);
@@ -62,6 +61,26 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
 
+  new DataTable('#LowMedicine', {
+    searchable: true,
+    fixedHeight: true,
+    perPage: 5,
+    perPageSelect: [5, 10, 15, 20],
+  });
+
+  new DataTable('#MedicineList', {
+    searchable: true,
+    fixedHeight: true,
+    perPage: 10,
+    perPageSelect: [10, 25, 50, 100],
+  });
+  new DataTable('#UserTable', {
+    searchable: true,
+    fixedHeight: true,
+    perPage: 10,
+    perPageSelect: [10, 25, 50, 100],
+  });
+  
   // LOW STOCK CHART - Animated bars with emphasis
   const lowCtx = document.getElementById('lowStockChart');
   new Chart(lowCtx, {
