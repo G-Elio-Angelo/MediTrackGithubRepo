@@ -1,36 +1,57 @@
 @extends('layouts.app')
 
-
 @section('content')
-<div class="glass-container d-flex justify-content-center align-items-center">
-  <div class="card shadow p-4 login-card">
-      <h3 class="mb-3 text-center">Login to MediTrack</h3>
+<link rel="stylesheet" href="{{ asset('css/login.css') }}">
 
-      @if($errors->any())
-        <div class="alert alert-danger">
-          {{ $errors->first() }}
-        </div>
-      @endif
+<div class="auth-container">
 
-      <form method="POST" action="{{ route('login.post') }}">
-        @csrf
-        <div class="mb-3">
-          <label class="form-label">Email</label>
-          <input type="email" name="email" value="{{ old('email') }}" class="form-control" required>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Password</label>
-          <input type="password" name="password" class="form-control" required>
-        </div>
-        <div class="d-grid gap-2">
-          <button type="submit" class="btn btn-primary">Login</button>
-        </div>
-      </form>
+    <div class="login-card">
 
-      <div class="mt-3 text-center">
-        <a href="{{ route('register') }}">Don't have an account? Register</a>
-      </div>
+        <!-- Logo -->
+        <div class="logo-wrapper">
+        </div>
+
+        <!-- Title -->
+        <h3 class="mb-3 text-center health-title">Login</h3>
+
+        <!-- Error Message -->
+        @if($errors->any())
+            <div class="alert alert-danger-custom">
+                {{ $errors->first() }}
+            </div>
+        @endif
+
+        <!-- Login Form -->
+        <form method="POST" action="{{ route('login.post') }}">
+            @csrf
+
+            <div class="form-group">
+                <label class="fw-bold"><i class="fas fa-envelope me-2"></i>Email</label>
+                <input type="email" name="email" value="{{ old('email') }}"
+                       class="form-control" placeholder="Enter your email" required>
+            </div>
+
+            <div class="form-group">
+                <label class="fw-bold"><i class="fas fa-lock me-2"></i>Password</label>
+                <input type="password" name="password"
+                       class="form-control" placeholder="Enter your password" required>
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg"
+                        style="background-color:#1d3557; border:none;">
+                    Login
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-3 text-center">
+            <a href="{{ route('register') }}" class="text-decoration-none">
+                Already have an account? <strong>Register</strong>
+            </a>
+        </div>
+
     </div>
+
 </div>
 @endsection
-

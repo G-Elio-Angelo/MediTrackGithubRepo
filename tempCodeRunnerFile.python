@@ -1,0 +1,23 @@
+user_profile = {
+    "name": "Alex",
+    "age": 28,
+    "city" : "London"
+}
+
+key = input("Enter the key you want to retrieve from the profile: ")
+
+try:
+    value = user_profile[key]
+    value_upper = value.upper()
+except KeyError:
+    print("Error: The key entered was not found in the profile.")
+except AttributeError:
+    # This part should be AttributeError because the case where value does not have an .upper() method (like int)
+    print("Error: Cannot convert the value to uppercase (it might be a number).")
+except:
+    print("Something else went wrong. Please re-run the program and try again.")
+else:
+    print(f"Success! Retrieved value in uppercase: {value_upper}")
+finally:
+    print("Dictionary access finished.")
+    

@@ -1,0 +1,167 @@
+/* ================================
+   GLOBAL BACKGROUND
+================================ */
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100vw;
+    font-family: "Poppins", sans-serif;
+
+    /* Background Image */
+    background: url('/images/BackgroundMunicipal.png') no-repeat center center fixed;
+    background-size: cover;
+}
+
+/* Center Container for Login & Register */
+.glass-container,
+.register-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* ================================
+   GLASS CARD DESIGN
+================================ */
+.login-card,
+.register-card {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    width: 450px;
+    padding: 35px;
+
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+
+    box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.25);
+    animation: fadeIn 0.7s ease;
+}
+
+/* Wider card for register */
+.register-card {
+    width: 520px;
+}
+
+/* ================================
+   LOGO
+================================ */
+.health-logo,
+.meditrack-logo {
+    width: 110px;
+    height: auto;
+    margin-bottom: 15px;
+    filter: drop-shadow(0px 3px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* ================================
+   HEADERS
+================================ */
+.health-title,
+.register-header h1 {
+    color: #1d3557;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+/* ================================
+   FORM ELEMENTS
+================================ */
+label {
+    color: #1d3557;
+    font-weight: 600;
+}
+
+.form-control {
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #c6c6c6;
+}
+
+.form-control:focus {
+    border-color: #1d3557;
+    box-shadow: 0px 0px 6px rgba(29, 53, 87, 0.5);
+}
+
+/* ================================
+   BUTTONS
+================================ */
+.btn-primary,
+.btn-register {
+    background-color: #1d3557;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 12px;
+    width: 100%;
+    font-size: 17px;
+    letter-spacing: 0.5px;
+    transition: 0.2s;
+}
+
+.btn-primary:hover,
+.btn-register:hover {
+    background-color: #16324f;
+}
+
+/* ================================
+   LINKS
+================================ */
+.login-link p,
+.text-center a {
+    margin-top: 10px;
+    color: #1d3557;
+    font-weight: 500;
+}
+
+.text-center a:hover,
+.login-link a:hover {
+    text-decoration: underline;
+}
+
+/* ================================
+   FORM ROWS (Register)
+================================ */
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.form-row.full {
+    flex-direction: column;
+}
+
+.form-group {
+    flex: 1;
+}
+
+/* ================================
+   ANIMATION
+================================ */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0);   }
+}
+
+/* Error / Success alerts match glass UI */
+.alert-danger-custom,
+.alert-success-custom {
+    background: rgba(255, 0, 0, 0.15);
+    border-left: 4px solid #b00000;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    color: #700000;
+}
+
+.alert-success-custom {
+    background: rgba(0, 128, 0, 0.15);
+    border-left: 4px solid #007000;
+    color: #005000;
+}
