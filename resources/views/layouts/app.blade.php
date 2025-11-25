@@ -16,32 +16,6 @@
 </head>
 
 <body>
-
-  <!-- FIXED NAVBAR -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="container">
-
-      <a class="navbar-brand text-light"
-         href="{{ auth()->check() ? (auth()->user()->role === 'admin' ? route('admin.dashboard') : route('user.dashboard')) : route('login') }}">
-        MediTrack
-      </a>
-
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          @auth
-            <li class="nav-item">
-              <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="btn btn-link nav-link text-light">Logout</button>
-              </form>
-            </li>
-          @endauth
-        </ul>
-      </div>
-
-    </div>
-  </nav>
-
   <main class="py-4">
     @yield('content')
   </main>

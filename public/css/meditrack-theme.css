@@ -1,0 +1,365 @@
+    body, html {
+        height: 100%;
+        margin: 0;
+        font-family: 'Poppins', -apple-system, BlinkMacMacFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background: #f4f7fa; 
+        color: var(--text-dark);
+    }
+    
+    .text-danger { color: var(--danger) !important; }
+    .text-warning { color: var(--warning) !important; }
+    .muted, .text-muted { color: var(--muted) !important; font-size: 0.85rem; }
+    .fw-bold { font-weight: 700; }
+    .mt-4 { margin-top: 1.5rem !important; }
+    
+    .mtk-app {
+        display: flex;
+        max-width: var(--max-width);
+        margin: 0 auto;
+        min-height: 100vh;
+    }
+
+    .mtk-sidebar{
+        width: var(--sidebar-width);
+        min-height: 100vh;
+        padding: 28px 20px;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border-light);
+        box-shadow: var(--shadow-card); 
+        display:flex;
+        flex-direction:column;
+        gap: 30px; 
+        position: sticky;
+        top: 0;
+    }
+    
+
+    .mtk-brand{
+        display:flex;
+        align-items:center;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+    .mtk-brand-logo{
+        width: 40px; 
+        height: 40px;
+        border-radius: 8px;
+        background: var(--primary);
+        padding: 8px;
+        box-shadow: 0 4px 12px rgba(29, 110, 168, 0.3); 
+        object-fit: contain;
+    }
+    .mtk-brand-title{
+        font-size: 24px; 
+        margin: 0;
+        font-weight: 800;
+        color: var(--primary);
+    }
+
+    .mtk-nav{
+        display:flex;
+        flex-direction:column;
+        gap: 4px;
+    }
+    .mtk-nav-item{
+        display:flex;
+        gap: 10px;
+        align-items:center;
+        padding: 10px 14px;
+        border-radius: 8px; 
+        color: var(--text-dark);
+        text-decoration:none;
+        font-weight: 500; 
+        transition: all .2s ease;
+    }
+    .mtk-nav-item i{ font-size: 1.1rem; color: var(--muted); transition: color .2s ease; }
+    
+    .mtk-nav-item:hover{
+        background: #f1f9ff;
+        color: var(--primary);
+    }
+    .mtk-nav-item:hover i{ color: var(--primary); }
+    
+    .mtk-nav-item.active{
+        background: var(--primary);
+        color: white;
+        box-shadow: 0 4px 14px rgba(29, 110, 168, 0.3);
+    }
+    .mtk-nav-item.active i{ color: white; }
+    
+    
+    .mtk-sidebar-footer{
+        margin-top:auto;
+        font-size: 11px;
+        color: var(--muted);
+        text-align:center;
+        border-top: 1px dashed var(--border-light);
+        padding-top: 15px;
+    }
+    
+    .mtk-main{
+        flex: 1;
+        padding: 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px; 
+    }
+    
+    .mtk-topbar{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+    }
+    .mtk-search{
+        display:flex;
+        align-items:center;
+        background: var(--card-bg);
+        border:1px solid var(--border-light);
+        padding: 8px 12px;
+        border-radius: 10px;
+        box-shadow: var(--shadow-subtle);
+    }
+    .mtk-search input{
+        border:none;
+        outline:none;
+        background:transparent;
+        width: 280px; 
+        padding: 0 8px;
+        font-size: 14px;
+    }
+    .mtk-search-icon { color: var(--muted); }
+    .icon-btn{
+        background:none;
+        border:none;
+        cursor:pointer;
+        color:var(--primary);
+    }
+    
+    .mtk-user{
+        display:flex;
+        gap: 12px;
+        align-items:center;
+        padding: 6px 10px;
+        background: var(--card-bg);
+        border-radius: 10px;
+        border: 1px solid var(--border-light);
+        box-shadow: var(--shadow-subtle);
+    }
+    .mtk-avatar{
+        width: 38px;height: 38px; 
+        border-radius: 8px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color:white;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-weight: 600;
+        font-size: 14px;
+    }
+    .mtk-user-meta{
+        font-size: 14px;
+        line-height: 1.2;
+    }
+    .mtk-user-name { font-weight: 600; }
+    .link-logout{
+        color: var(--danger);
+        border:none;
+        background:none;
+        cursor:pointer;
+        font-size: 12px;
+        text-decoration: underline;
+        opacity: 0.8;
+        transition: opacity .2s;
+    }
+    .link-logout:hover { opacity: 1; }
+    .link-logout i { margin-right: 4px; }
+    
+    .mtk-hero h2{
+        margin:0 0 4px 0;
+        color: var(--primary);
+        font-weight: 800;
+    }
+    .mtk-hero h2 i { font-size: 1.5rem; }
+    
+    .mtk-grid{
+        display:grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+    }
+    .mtk-card{
+        background: var(--card-bg);
+        border-radius: var(--card-radius);
+        padding: 20px;
+        border:1px solid var(--border-light);
+        box-shadow: var(--shadow-subtle);
+        position: relative;
+        overflow: hidden;
+    }
+    .mtk-card-icon {
+        position: absolute;
+        top: 15px;
+        right: 18px;
+        font-size: 2.5rem;
+        color: var(--border-light);
+        opacity: 0.5;
+        transition: color 0.2s;
+    }
+    .mtk-card:hover .mtk-card-icon {
+        color: var(--primary);
+        opacity: 0.8;
+    }
+    .mtk-card-meta{
+        font-size: 14px;
+        color: var(--muted);
+        margin-bottom: 4px;
+    }
+    .mtk-card-value{
+        font-size: 28px; 
+        font-weight: 800;
+        color: var(--text-dark); 
+    }
+    
+    .mtk-actions{ display:flex; gap: 14px; flex-wrap:wrap; }
+    .mtk-btn{
+        background: var(--primary);
+        color: white;
+        padding: 12px 18px;
+        border-radius: 10px;
+        text-decoration:none;
+        box-shadow: 0 4px 15px rgba(29, 110, 168, 0.2);
+        font-weight: 600;
+        transition: all .2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+    }
+    .mtk-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(29, 110, 168, 0.3);
+    }
+    .mtk-btn i { font-size: 1.1em; }
+    
+    .mtk-content { max-width: 100%; }
+    .mtk-row{ display:flex; gap: 24px; margin-top: 24px; }
+    .mtk-column{ flex: 2; display:flex; flex-direction:column; gap: 24px; }
+    .mtk-column-small { flex: 1; }
+    
+    .panel{
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 20px; 
+        border:1px solid var(--border-light);
+        box-shadow: var(--shadow-subtle);
+        height: 100%;
+    }
+    .panel-head{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-light);
+    }
+    .panel-title{
+        margin:0;
+        font-size: 18px;
+        color: var(--text-dark);
+        font-weight: 700;
+    }
+    .panel-subtitle {
+        font-size: 14px;
+        color: var(--primary);
+        font-weight: 600;
+        margin-top: 15px;
+    }
+    .panel-action {
+        font-size: 13px;
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+        opacity: 0.8;
+    }
+    .panel-action:hover { text-decoration: underline; opacity: 1; }
+    
+    .table{
+        width:100%;
+        border-collapse:separate;
+        border-spacing: 0;
+        font-size: 14px;
+    }
+    .table thead th{
+        background:#f8f9fc;
+        padding: 12px 10px;
+        color: var(--primary);
+        font-weight: 600;
+        text-align: left;
+        border-top: 1px solid var(--border-light);
+        border-bottom: 1px solid var(--border-light);
+    }
+    .table tbody td{
+        padding: 10px 10px;
+        border-bottom: 1px solid var(--border-light);
+    }
+    .table-striped tbody tr:nth-child(odd) {
+        background-color: #fcfdfe; 
+    }
+    .table-hover tbody tr:hover {
+        background-color: #f1f9ff;
+    }
+    
+    .empty-state{
+        padding: 20px;
+        text-align:center;
+        color:var(--muted);
+        background: #f8f9fb;
+        border-radius: 8px;
+    }
+    
+    .chart-wrapper{
+        width:100%;
+        height: 250px;
+    }
+    .chart-wrapper-pie {
+        height: 300px;
+        max-height: 300px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .chart-wrapper-pie canvas {
+        max-width: 90%;
+    }
+    
+    @media (max-width: 1200px){
+        .mtk-grid{ grid-template-columns: repeat(2, 1fr); }
+        .mtk-row{ flex-direction: column; }
+        .mtk-column-small { flex: 1; }
+        .mtk-sidebar { position: static; min-height: auto; width: 100%; border-right: none; border-bottom: 1px solid var(--border-light); }
+        .mtk-app { flex-direction: column; }
+    }
+    @media (max-width: 700px){
+        .mtk-grid{ grid-template-columns: 1fr; }
+        .mtk-topbar{ flex-direction: column; gap: 15px; align-items: flex-start; }
+        .mtk-search input { width: 100%; }
+        .mtk-search { width: 100%; }
+    }
+
+    :root{
+        --primary: #1d6ea8; 
+        --secondary: #7bbf8e; 
+        --danger: #d9534f;
+        --warning: #f0ad4e; 
+        --muted: #8898aa;
+        --text-dark: #334e68;
+        --card-bg: #ffffff;
+        --sidebar-bg: #ffffff;
+        --border-light: #e0e9f1;
+    
+        --card-radius: 12px;
+        --sidebar-width: 280px;
+        --max-width: 1400px;
+        --shadow-subtle: 0 4px 10px rgba(0,0,0,0.04);
+        --shadow-card: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    

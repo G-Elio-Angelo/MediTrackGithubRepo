@@ -5,8 +5,6 @@ body {
     height: 100vh;
     width: 100vw;
     font-family: "Poppins", sans-serif;
-
- 
     background: url('/images/BackgroundMunicipal.png') no-repeat center center fixed;
     background-size: cover;
 }
@@ -121,7 +119,6 @@ label {
     to   { opacity: 1; transform: translateY(0);   }
 }
 
-/* Error / Success alerts match glass UI */
 .alert-danger-custom,
 .alert-success-custom {
     background: rgba(255, 0, 0, 0.15);
