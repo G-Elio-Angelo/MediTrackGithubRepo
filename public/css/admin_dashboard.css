@@ -1,10 +1,8 @@
-/* Background */
 body {
     background: linear-gradient(to bottom right, #f7f9fc, #e2e8f0);
     min-height: 100vh;
 }
 
-/* Cards */
 .card {
     border-radius: 15px;
     background: #ffffff;
@@ -12,7 +10,6 @@ body {
     padding: 20px;
 }
 
-/* Summary cards */
 .summary-card h5 {
     font-weight: 600;
     color: #1d3557;
@@ -22,7 +19,6 @@ body {
     font-weight: 700;
 }
 
-/* Management buttons */
 .btn {
     font-weight: 600;
     padding: 10px 20px;
@@ -36,7 +32,6 @@ body {
     box-shadow: 0 6px 12px rgba(0,0,0,0.1);
 }
 
-/* Table Styling */
 .table {
     border-radius: 12px;
     overflow: hidden;
@@ -55,7 +50,6 @@ body {
     color: #842029;
 }
 
-/* Charts */
 canvas {
     background: #ffffff;
     border-radius: 12px;
@@ -63,17 +57,14 @@ canvas {
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
-/* Headings */
 h2, h5, h6 {
     color: #1d3557;
 }
 
-/* Alerts */
 .alert {
     border-radius: 12px;
 }
 
-/* Logout Button */
 .btn-outline-secondary {
     border-radius: 12px;
 }

@@ -7,21 +7,17 @@
 
     <div class="login-card">
 
-        <!-- Logo -->
         <div class="logo-wrapper">
         </div>
 
-        <!-- Title -->
         <h3 class="mb-3 text-center health-title">Login</h3>
 
-        <!-- Error Message -->
         @if($errors->any())
             <div class="alert alert-danger-custom">
                 {{ $errors->first() }}
             </div>
         @endif
 
-        <!-- Login Form -->
         <form method="POST" action="{{ route('login.post') }}">
             @csrf
 

@@ -1,6 +1,3 @@
-/* ================================
-   GLOBAL BACKGROUND
-================================ */
 body {
     margin: 0;
     padding: 0;
@@ -8,12 +5,10 @@ body {
     width: 100vw;
     font-family: "Poppins", sans-serif;
 
-    /* Background Image */
     background: url('/images/BackgroundMunicipal.png') no-repeat center center fixed;
     background-size: cover;
 }
 
-/* Center Container for Login & Register */
 .glass-container,
 .register-container {
     min-height: 100vh;
@@ -23,9 +18,7 @@ body {
     padding: 20px;
 }
 
-/* ================================
-   GLASS CARD DESIGN
-================================ */
+
 .login-card,
 .register-card {
     background: rgba(255, 255, 255, 0.25);
@@ -42,14 +35,10 @@ body {
     animation: fadeIn 0.7s ease;
 }
 
-/* Wider card for register */
 .register-card {
     width: 520px;
 }
 
-/* ================================
-   LOGO
-================================ */
 .health-logo,
 .meditrack-logo {
     width: 110px;
@@ -58,9 +47,6 @@ body {
     filter: drop-shadow(0px 3px 4px rgba(0, 0, 0, 0.3));
 }
 
-/* ================================
-   HEADERS
-================================ */
 .health-title,
 .register-header h1 {
     color: #1d3557;
@@ -68,9 +54,6 @@ body {
     margin-bottom: 10px;
 }
 
-/* ================================
-   FORM ELEMENTS
-================================ */
 label {
     color: #1d3557;
     font-weight: 600;
@@ -88,9 +71,6 @@ label {
     box-shadow: 0px 0px 6px rgba(29, 53, 87, 0.5);
 }
 
-/* ================================
-   BUTTONS
-================================ */
 .btn-primary,
 .btn-register {
     background-color: #1d3557;
@@ -109,10 +89,6 @@ label {
     background-color: #16324f;
 }
 
-
-/* ================================
-   LINKS
-================================ */
 .login-link p,
 .text-center a {
     margin-top: 10px;
@@ -125,9 +101,6 @@ label {
     text-decoration: underline;
 }
 
-/* ================================
-   FORM ROWS (Register)
-================================ */
 .form-row {
     display: flex;
     gap: 15px;
@@ -142,15 +115,11 @@ label {
     flex: 1;
 }
 
-/* ================================
-   ANIMATION
-================================ */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to   { opacity: 1; transform: translateY(0);   }
 }
 
-/* Error / Success alerts match glass UI */
 .alert-danger-custom,
 .alert-success-custom {
     background: rgba(255, 0, 0, 0.15);
@@ -171,7 +140,7 @@ label {
     height: 100vh;
     width: 100%;
     display: flex;
-    justify-content: center;   /* horizontally center */
-    align-items: center;       /* vertically center */
+    justify-content: center;  
+    align-items: center;      
     padding: 20px;
 }

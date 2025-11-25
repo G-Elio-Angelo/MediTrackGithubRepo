@@ -6,14 +6,12 @@
 <div class="glass-container d-flex justify-content-center align-items-center">
     <div class="card shadow p-4 login-card" style="max-width: 500px; width: 100%;">
 
-        <!-- Logo -->
         <div class="text-center mb-2">
          
         </div>
 
         <h3 class="mb-3 text-center health-title">Create Your Account</h3>
 
-        <!-- Alerts -->
         @if(session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
@@ -108,4 +106,5 @@
 
     </div>
 </div>
+
 @endsection
