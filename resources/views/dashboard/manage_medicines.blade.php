@@ -6,6 +6,7 @@
     <h2 class="mb-0">Manage Medicines</h2>
     <div>
       <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary me-2">← Back to Dashboard</a>
+      <a href="{{ route('admin.reports') }}" class="btn btn-outline-info me-2">📊 Reports</a>
       <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addMedicineModal">+ Add Medicine</button>
     </div>
   </div>
