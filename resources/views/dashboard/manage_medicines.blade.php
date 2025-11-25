@@ -6,6 +6,7 @@
     <h2 class="mb-0">Manage Medicines</h2>
     <div>
       <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary me-2">← Back to Dashboard</a>
+      <a href="{{ route('admin.reports') }}" class="btn btn-outline-info me-2">📊 Reports</a>
       <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addMedicineModal">+ Add Medicine</button>
     </div>
   </div>
@@ -14,15 +15,15 @@
     <div class="alert alert-success">{{ session('success') }}</div>
   @endif
 
-  <table class="table table-striped table-hover align-middle">
+  <table class="table datatable table-striped table-hover align-middle">
     <thead class="table-dark">
       <tr>
         <th>ID</th>
         <th>Medicine Name</th>
         <th>Batch Number</th>
         <th>Supplier</th>
-        <th>Interval (min)</th>
         <th>Stock</th>
+        <th>Delivered Date</th>
         <th>Expiry Date</th>
         <th>Action</th>
       </tr>
@@ -34,8 +35,8 @@
           <td>{{ $medicine->medicine_name }}</td>
           <td>{{ $medicine->batch_number }}</td>
           <td>{{ $medicine->supplier_name ?? '—' }}</td>
-          <td>{{ $medicine->intake_interval_minutes ?? 30 }}</td>
           <td>{{ $medicine->stock }}</td>
+          <td>{{ $medicine->delivered_date ? \Carbon\Carbon::parse($medicine->delivered_date)->format('Y-m-d') : '—' }}</td>
           <td>{{ $medicine->expiry_date }}</td>
           <td>
             <!-- Edit Button -->
@@ -88,16 +89,16 @@
                     <input type="text" name="batch_number" class="form-control" value="{{ $medicine->batch_number }}" required>
                   </div>
                   <div class="mb-3">
-                    <label class="form-label">Intake Interval (minutes)</label>
-                    <input type="number" name="intake_interval_minutes" class="form-control" min="1" value="{{ $medicine->intake_interval_minutes ?? 30 }}">
-                  </div>
-                  <div class="mb-3">
                     <label class="form-label">Supplier Name</label>
                     <input type="text" name="supplier_name" class="form-control" value="{{ $medicine->supplier_name }}">
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Stock</label>
                     <input type="number" name="stock" class="form-control" value="{{ $medicine->stock }}" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Delivered Date</label>
+                    <input type="date" name="delivered_date" class="form-control" value="{{ $medicine->delivered_date ? \Carbon\Carbon::parse($medicine->delivered_date)->format('Y-m-d') : '' }}">
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Expiry Date</label>
@@ -178,7 +179,7 @@
   <div class="card shadow-sm p-3 mt-4">
     <h5 class="mb-3">Returned Medicines</h5>
     @if(isset($returns) && $returns->isNotEmpty())
-      <table class="table table-striped table-hover align-middle">
+    <table class="table datatable table-striped table-hover align-middle">
         <thead class="table-light">
           <tr>
             <th>ID</th>
@@ -230,16 +231,16 @@
             <input type="text" name="batch_number" class="form-control" required>
           </div>
           <div class="mb-3">
-            <label class="form-label">Intake Interval (minutes)</label>
-            <input type="number" name="intake_interval_minutes" class="form-control" min="1" value="30">
-          </div>
-          <div class="mb-3">
             <label class="form-label">Supplier Name</label>
             <input type="text" name="supplier_name" class="form-control">
           </div>
           <div class="mb-3">
             <label class="form-label">Stock</label>
             <input type="number" name="stock" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Delivered Date</label>
+            <input type="date" name="delivered_date" class="form-control">
           </div>
           <div class="mb-3">
             <label class="form-label">Expiry Date</label>

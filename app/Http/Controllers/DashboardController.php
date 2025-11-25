@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Services\ActivityLogger;
 
 class DashboardController extends Controller
 {
@@ -62,6 +63,7 @@ class DashboardController extends Controller
             }
 
             DB::commit();
+            ActivityLogger::log('intake.confirmed', ['intake_id' => $intake->id, 'user_id' => $user->user_id, 'medicine_id' => $intake->medicine->id ?? null, 'quantity_taken' => 1]);
             return redirect()->back()->with('success', 'Intake confirmed.');
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -120,6 +122,7 @@ class DashboardController extends Controller
 
             DB::commit();
             Log::info('Patient returned medicine', ['user_id' => $user->user_id, 'medicine_id' => $medicine->id, 'qty' => $qty]);
+            ActivityLogger::log('intake.returned', ['user_id' => $user->user_id, 'medicine_id' => $medicine->id, 'quantity' => $qty, 'intake_id' => $intake->id]);
             return redirect()->back()->with('success', 'Return recorded — inventory updated.');
         } catch (\Throwable $e) {
             DB::rollBack();
