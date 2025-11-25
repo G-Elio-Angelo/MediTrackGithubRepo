@@ -20,7 +20,6 @@ class ActivityLogger
                 'user_id' => $user ? ($user->user_id ?? $user->id) : null,
                 'action' => $action,
                 'ip_address' => Request::ip(),
-                'meta' => $meta ?: null,
             ]);
         } catch (\Throwable $e) {
             // avoid breaking primary flow if logging fails

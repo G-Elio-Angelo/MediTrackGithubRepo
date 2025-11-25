@@ -14,7 +14,6 @@
           <th>ID</th>
           <th>User</th>
           <th>Action</th>
-          <th>Meta</th>
           <th>IP</th>
           <th>When</th>
         </tr>
@@ -24,24 +23,25 @@
   </div>
 </div>
 
+@section('scripts')
 <script>
   $(function() {
     $('#activityLogsTable').DataTable({
       processing: true,
       serverSide: true,
       ajax: "{{ route('admin.logs.data') }}",
-        pageLength: 10,
+      pageLength: 10,
         columns: [
           { data: 'id' },
           { data: 'user' },
           { data: 'action' },
-          { data: 'meta' },
           { data: 'ip_address' },
           { data: 'created_at' }
         ],
-        order: [[5, 'desc']],
-        responsive: true
+        order: [[4, 'desc']],
+      responsive: true
     });
   });
 </script>
+@endsection
 @endsection

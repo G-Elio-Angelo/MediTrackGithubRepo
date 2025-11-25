@@ -77,5 +77,8 @@
     });
   </script>
 
+  {{-- Page-specific scripts: rendered after jQuery/DataTables libraries --}}
+  @yield('scripts')
+
 </body>
 </html>

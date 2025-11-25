@@ -10,11 +10,11 @@ class ActivityLog extends Model
     protected $table = 'activity_logs';
 
     protected $fillable = [
-        'user_id', 'action', 'ip_address', 'meta'
+        'user_id', 'action', 'ip_address'
     ];
 
     protected $casts = [
-        'meta' => 'array',
+        // no casts required for removed meta
     ];
 
     public function user()

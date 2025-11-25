@@ -336,7 +336,7 @@ class AdminController extends Controller
         // ordering
         $orderColIndex = $request->input('order.0.column', 0);
         $orderDir = $request->input('order.0.dir', 'desc');
-        $columns = ['id', 'user_id', 'action', 'meta', 'ip_address', 'created_at'];
+        $columns = ['id', 'user_id', 'action', 'ip_address', 'created_at'];
         $orderCol = $columns[$orderColIndex] ?? 'created_at';
         if ($orderCol === 'user_id') {
             $query = $query->orderBy('user_id', $orderDir);
@@ -351,7 +351,6 @@ class AdminController extends Controller
                 'id' => $log->id,
                 'user' => $log->user ? ($log->user->full_name ?? $log->user->username) : 'System',
                 'action' => $log->action,
-                'meta' => json_encode($log->meta ?? [], JSON_UNESCAPED_UNICODE),
                 'ip_address' => $log->ip_address ?? '—',
                 'created_at' => $log->created_at ? $log->created_at->format('Y-m-d H:i') : '',
             ];

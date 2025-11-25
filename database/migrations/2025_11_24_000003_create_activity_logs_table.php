@@ -13,12 +13,9 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id')->nullable()->index();
             $table->string('action');
             $table->string('ip_address')->nullable();
-            $table->text('user_agent')->nullable();
             $table->json('meta')->nullable();
             $table->timestamps();
-
-            // optional foreign key: keep nullable to avoid cascade issues
-            // $table->foreign('user_id')->references('user_id')->on('users')->nullOnDelete();
+            $table->foreign('user_id')->references('user_id')->on('users')->nullOnDelete();
         });
     }
 
