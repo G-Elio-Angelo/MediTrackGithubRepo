@@ -3,7 +3,7 @@
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/login.css') }}">
 
-<div class="auth-container">
+<div class="glass-container">
 
     <div class="login-card">
 

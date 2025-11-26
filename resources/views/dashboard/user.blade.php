@@ -52,8 +52,6 @@
                         </div>
 
                         <h4 class="fw-bold text-dark mb-1">{{ auth()->user()->full_name }}</h4>
-                        <p class="text-muted small mb-4 border-bottom pb-3">Patient ID: <span class="fw-semibold text-primary-dark">#{{ auth()->user()->id }}</span></p>
-
                         <div class="text-start p-3 rounded-4 mb-4" style="background-color: #f8f9fa;">
                             
                             {{-- Contact Info Boxes --}}

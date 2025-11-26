@@ -1,0 +1,40 @@
+.auth-page-bg {
+    min-height: 100vh;
+    background-color: #f8f9fa; 
+}
+
+.otp-card {
+    border: none;
+    border-radius: 1rem; 
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); 
+}
+
+.otp-input {
+    letter-spacing: 15px; 
+    font-weight: 700;
+    height: 70px; 
+    border: 2px solid #ced4da;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.otp-input:focus {
+    border-color: #0d6efd; 
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.verify-btn {
+    border-radius: 0.75rem; 
+    font-weight: 600;
+}
+
+.resend-link,
+.back-link {
+    font-weight: 500;
+    color: #0d6efd; 
+    text-decoration: none;
+}
+
+.resend-link:hover,
+.back-link:hover {
+    text-decoration: underline;
+}

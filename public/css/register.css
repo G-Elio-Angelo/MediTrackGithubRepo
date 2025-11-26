@@ -1,12 +1,10 @@
-
 body {
     margin: 0;
     padding: 0;
     height: 100vh;
     width: 100vw;
     font-family: "Poppins", sans-serif;
-    background: url('/images/BackgroundMunicipal.png') no-repeat center center fixed;
-    background-size: cover;
+    background: #f1f1f1; /* removed background image */
 }
 
 .glass-container,
@@ -20,17 +18,20 @@ body {
 
 .login-card,
 .register-card {
-    background: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: #ffffff; /* solid white */
+    background: rgba(255, 255, 255, 0.9); /* slight dark white */
+    
+    /* remove glass */
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
 
     width: 450px;
     padding: 35px;
 
     border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.35);
+    border: 1px solid #dcdcdc;  /* light gray border */
 
-    box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.25);
+    box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.15);
     animation: fadeIn 0.7s ease;
 }
 
@@ -116,7 +117,7 @@ label {
 
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0);   }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 .alert-danger-custom,
@@ -134,3 +135,4 @@ label {
     border-left: 4px solid #007000;
     color: #005000;
 }
+
