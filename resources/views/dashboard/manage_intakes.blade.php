@@ -23,6 +23,9 @@
             </a>
             <a href="{{ route('admin.users') }}" class="mtk-nav-item">
                 <i class="fal fa-users-crown"></i><span>Admin & User Records</span>
+            <a href="{{ route('admin.intakes') }}" class="mtk-nav-item active">
+                <i class="fal fa-file-alt"></i><span>Manage Patient Intakes</span>
+            </a>
             </a>
             <a href="{{ route('admin.logs') }}" class="mtk-nav-item">
                 <i class="fal fa-file-alt"></i><span>Activity Reports</span>
@@ -40,9 +43,6 @@
                 </button>
             </form>
             
-            <div class="mtk-sidebar-footer text-center">
-                <small class="text-muted">v1.0 • MediTrack</small>
-            </div>
         </div>
         {{-- END: Updated Sidebar Footer Section --}}
     </aside>
@@ -61,10 +61,7 @@
                     <div class="mtk-avatar">MI</div>
                     <div class="mtk-user-meta">
                         <div class="mtk-user-name">{{ Auth::user()->first_name ?? 'Admin' }}</div>
-                        <form method="POST" action="{{ route('logout') }}" class="d-inline">
-                            @csrf
-                            <button class="link-logout" type="submit"><i class="fal fa-sign-out"></i> Logout</button>
-                        </form>
+                        
                     </div>
                 </div>
                 @endauth

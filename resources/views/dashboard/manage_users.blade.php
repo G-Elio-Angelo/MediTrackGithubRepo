@@ -23,6 +23,9 @@
             </a>
             <a href="{{ route('admin.users') }}" class="mtk-nav-item active">
                 <i class="fal fa-users-crown"></i><span>Admin & User Records</span>
+            <a href="{{ route('admin.intakes') }}" class="mtk-nav-item">
+                <i class="fal fa-file-alt"></i><span>Manage Patient Intakes</span>
+            </a>
             </a>
             <a href="{{ route('admin.logs') }}" class="mtk-nav-item">
                 <i class="fal fa-file-alt"></i><span>Activity Reports</span>
