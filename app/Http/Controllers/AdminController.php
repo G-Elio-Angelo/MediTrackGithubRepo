@@ -178,14 +178,7 @@ class AdminController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Invalid intake time format.');
         }
-        if ($intervalMinutes > 1) {
-            $minutes = (int)$intakeDt->format('i');
-            $minutesTotal = $intakeDt->hour * 60 + $minutes;
-            $roundedTotal = (int) (round($minutesTotal / $intervalMinutes) * $intervalMinutes);
-            $newHour = intdiv($roundedTotal, 60);
-            $newMin = $roundedTotal % 60;
-            $intakeDt->setTime($newHour, $newMin, 0);
-        }
+        // Use the exact intake time provided by the user — do not auto-round to interval.
         $validated['intake_time'] = $intakeDt->toDateTimeString();
         $qty = (int) $validated['quantity'];
 
@@ -204,6 +197,15 @@ class AdminController extends Controller
                 'status' => false,
                 'quantity' => $qty,
             ]);
+
+            // If an interval was supplied in the scheduling form, save it to the medicine for future use
+            if ($request->filled('interval_minutes')) {
+                $mi = Medicine::find($validated['medicine_id']);
+                if ($mi) {
+                    $mi->intake_interval_minutes = (int)$request->input('interval_minutes');
+                    $mi->save();
+                }
+            }
 
             // Log activity
             ActivityLogger::log('intake.scheduled', [
@@ -253,7 +255,7 @@ class AdminController extends Controller
             'medicine_name' => 'required|string|max:255',
             'batch_number' => 'required|string|max:255',
             'supplier_name' => 'nullable|string|max:255',
-            'intake_interval_minutes' => 'nullable|integer|min:1|max:1440',
+            'delivered_date'=> 'nullable|date',
             'stock' => 'required|integer|min:0',
             'expiry_date' => 'required|date',
         ]);
@@ -276,7 +278,7 @@ class AdminController extends Controller
             'medicine_name' => 'required|string|max:255',
             'batch_number' => 'required|string|max:255',
             'supplier_name' => 'nullable|string|max:255',
-            'intake_interval_minutes' => 'nullable|integer|min:1|max:1440',
+            'delivered_date'=> 'nullable|date',
             'stock' => 'required|integer|min:0',
             'expiry_date' => 'required|date',
         ]);
@@ -513,13 +515,31 @@ class AdminController extends Controller
         try {
             DB::beginTransaction();
 
+            // Normalize returned_at (accepts datetime-local values like 2025-11-26T14:30)
+            $returnedAt = null;
+            if (!empty($validated['returned_at'])) {
+                try {
+                    // try common formats
+                    if (str_contains($validated['returned_at'], 'T')) {
+                        $returnedAt = Carbon::createFromFormat('Y-m-d\TH:i', $validated['returned_at']);
+                    } else {
+                        $returnedAt = Carbon::parse($validated['returned_at']);
+                    }
+                } catch (\Exception $e) {
+                    Log::warning('returnMedicine: failed to parse returned_at, falling back to now', ['value' => $validated['returned_at']]);
+                    $returnedAt = now();
+                }
+            } else {
+                $returnedAt = now();
+            }
+
             $mr = MedicineReturn::create([
                 'medicine_id' => $medicine->id,
                 'batch_number' => $validated['batch_number'] ?? $medicine->batch_number,
                 'quantity' => $validated['quantity'],
                 'supplier_name' => $validated['supplier_name'] ?? $medicine->supplier_name,
                 'remarks' => $validated['remarks'] ?? null,
-                'returned_at' => $validated['returned_at'] ?? now(),
+                'returned_at' => $returnedAt,
             ]);
 
             // Adjust stock: 'remove' => return to supplier (decrease stock), 'add' => return to inventory (increase)

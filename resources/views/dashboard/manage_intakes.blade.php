@@ -241,14 +241,21 @@
 {{-- Ensure you include DataTables initialization if using the 'datatable' class --}}
 <script>
     $(document).ready(function() {
-        if ($('.datatable').length) {
-            $('.datatable').DataTable({
-                responsive: true,
-                paging: true,
-                searching: true,
-                ordering: true,
-                info: true
+        try {
+            var tables = $('.datatable');
+            tables.each(function() {
+                var el = this;
+                if ($.fn.DataTable.isDataTable(el)) return;
+                $(el).DataTable({
+                    responsive: true,
+                    paging: true,
+                    searching: true,
+                    ordering: true,
+                    info: true
+                });
             });
+        } catch (e) {
+            console.error('DataTables init error (manage_intakes)', e);
         }
     });
 

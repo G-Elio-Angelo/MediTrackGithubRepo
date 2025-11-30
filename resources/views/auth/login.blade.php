@@ -10,7 +10,7 @@
         <div class="logo-wrapper">
         </div>
 
-        <h3 class="mb-3 text-center health-title">Login</h3>
+        <h3 class="mb-3 text-center health-title">MediTrack Login</h3>
 
         @if($errors->any())
             <div class="alert alert-danger-custom">
@@ -43,7 +43,7 @@
 
         <div class="mt-3 text-center">
             <a href="{{ route('register') }}" class="text-decoration-none">
-                Already have an account? <strong>Register</strong>
+                Doesn't have an Account? <strong>Register</strong>
             </a>
         </div>
 
