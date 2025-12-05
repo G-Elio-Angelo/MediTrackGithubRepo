@@ -6,7 +6,6 @@
 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" xintegrity="sha384-AYmEC3Yw5U5dD7i7t53X30m46O7hF6+I23g9M+B4hL2t8F9gYt5Tz30O+gR7/d6KxYj" crossorigin="anonymous">
 
 <div class="mtk-app">
-    {{-- SIDEBAR - Re-include the structure for layout consistency --}}
     <aside class="mtk-sidebar">
         <div class="mtk-brand">
             <h1 class="mtk-brand-title">MediTrack</h1>
@@ -25,18 +24,14 @@
             <a href="{{ route('admin.logs') }}" class="mtk-nav-item">
                 <i class="fal fa-file-alt"></i><span>Activity Reports</span>
             </a>
-            {{-- Assuming there might be a dedicated link for Intakes list --}}
             <a href="{{ route('admin.intakes') }}" class="mtk-nav-item">
                 <i class="fal fa-pills"></i><span>Intake Records</span>
             </a>
         </nav>
         
-        {{-- START: Added Sidebar Footer Section for consistency --}}
         <div class="mtk-sidebar-bottom-actions">
-            {{-- Logout Form placed prominently at the bottom --}}
             <form method="POST" action="{{ route('logout') }}" class="w-100 mb-2">
                 @csrf
-                {{-- Using mtk-btn-secondary for consistent theme styling, but full width (w-100) --}}
                 <button type="submit" class="mtk-btn-secondary w-100">
                     <i class="fal fa-sign-out"></i> Logout
                 </button>
@@ -46,13 +41,10 @@
                 <small class="text-muted">v1.0 • MediTrack</small>
             </div>
         </div>
-        {{-- END: Added Sidebar Footer Section --}}
 
     </aside>
-    {{-- END SIDEBAR --}}
 
     <main class="mtk-main">
-        {{-- TOPBAR - Use the same topbar structure for visual completeness --}}
         <header class="mtk-topbar">
             <div class="mtk-search">
                 <i class="fal fa-search mtk-search-icon"></i>
@@ -74,7 +66,6 @@
                 @endauth
             </div>
         </header>
-        {{-- END TOPBAR --}}
 
         <section class="mtk-content">
             <div class="mtk-hero">
@@ -91,7 +82,6 @@
                 <div class="panel-body">
 
                     @if($errors->any())
-                        {{-- Styled alert to match the theme (assuming .alert is styled in CSS) --}}
                         <div class="alert alert-danger mb-4">
                             <h6 class="mb-2"><i class="fal fa-exclamation-triangle"></i> Validation Errors:</h6>
                             <ul>
@@ -106,7 +96,6 @@
                         @csrf
                         @method('PUT')
 
-                        {{-- Form Group 1: User --}}
                         <div class="mb-3">
                             <label class="form-label">Patient/User</label>
                             <select name="user_id" class="form-select" required>
@@ -118,7 +107,6 @@
                             </select>
                         </div>
 
-                        {{-- Form Group 2: Medicine --}}
                         <div class="mb-3">
                             <label class="form-label">Medicine</label>
                             <select name="medicine_id" class="form-select" required>
@@ -130,20 +118,17 @@
                             </select>
                         </div>
 
-                        {{-- Form Group 3: Intake Time --}}
                         <div class="mb-3">
                             <label class="form-label">Intake Time</label>
                             <input type="datetime-local" name="intake_time" class="form-control" value="{{ $intake->intake_time ? $intake->intake_time->format('Y-m-d\TH:i') : '' }}" required>
                         </div>
 
-                        {{-- Form Group 4: Intake Interval (Note: This looks like a display field, not an intake property) --}}
                         <div class="mb-3">
                             <label class="form-label">Intake Interval (Minutes)</label>
                             <input type="number" name="intake_interval_minutes" class="form-control" value="{{ $intake->medicine->intake_interval_minutes ?? '--' }}" placeholder="Enter intake interval in minutes" disabled>
                             <small class="text-muted mt-1 d-block">This reflects the interval set on the selected medicine and cannot be changed here.</small>
                         </div>
 
-                        {{-- Form Group 5: Status Checkbox --}}
                         <div class="mb-4 form-check">
                             <input type="checkbox" name="status" value="1" class="form-check-input" id="statusCheck" {{ $intake->status ? 'checked' : '' }}>
                             <label class="form-check-label" for="statusCheck">
@@ -151,7 +136,6 @@
                             </label>
                         </div>
 
-                        {{-- Submit Button --}}
                         <button type="submit" class="mtk-btn"><i class="fal fa-save"></i> Save Changes</button>
                     </form>
                 </div>

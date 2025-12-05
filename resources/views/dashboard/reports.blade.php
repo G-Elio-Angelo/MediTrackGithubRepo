@@ -2,7 +2,6 @@
 
 @section('content')
 <div class="container py-5">
-    {{-- ===== HEADER & BREADCRUMBS ===== --}}
     <div class="d-flex justify-content-between align-items-center mb-5 pb-3 border-bottom">
         <h1 class="fw-bolder text-dark">📋 Monthly Inventory Report</h1>
         <div class="d-flex gap-2">
@@ -15,7 +14,6 @@
         </div>
     </div>
 
-    {{-- ===== REPORT GENERATION CONTROLS (Clean Card) ===== --}}
     <div class="card p-4 shadow-lg rounded-xl mb-5 bg-white">
         <h4 class="card-title fw-semibold mb-3 border-bottom pb-2">Generate Analytics</h4>
         <div class="row align-items-end g-3">
@@ -25,7 +23,6 @@
                 <input type="month" id="reportMonth" class="form-control form-control-lg rounded" value="{{ $month }}">
             </div>
 
-            {{-- Action Buttons --}}
             <div class="col-md-9 d-flex gap-3 pt-3 pt-md-0">
                 <button id="generateBtn" class="btn btn-success btn-lg rounded-pill px-4 fw-bold shadow-sm flex-grow-1 flex-md-grow-0" style="min-width: 200px;">
                     <i class="fas fa-sync-alt me-2"></i> Generate Analytics
@@ -40,7 +37,6 @@
         </div>
     </div>
 
-    {{-- ===== REPORT RESULTS AREA (Placeholder/Output) ===== --}}
     <div class="card p-4 shadow-lg rounded-xl bg-white">
         <h4 class="card-title fw-semibold mb-4 border-bottom pb-2">Report Data Overview</h4>
         <div id="reportResults">
@@ -72,7 +68,7 @@
 
         // --- Shortages Table ---
         html += '<div class="mb-5">';
-        html += '<h5 class="fw-bold text-danger mb-3"><i class="fas fa-exclamation-triangle me-2"></i> Shortages (Stock <= 10)</h5>';
+        html += '<h5 class="fw-bold text-danger mb-3"><i class="fas fa-exclamation-triangle me-2"></i> Shortages </h5>';
         if (data.shortages.length === 0) {
             html += '<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i> All good! No shortages reported this month.</div>';
         } else {
@@ -122,10 +118,8 @@
         document.getElementById('reportResults').innerHTML = html;
     }
 
-    // --- JAVASCRIPT LOGIC (Unchanged) ---
     $(function() {
         function updateExportLinks(month) {
-            // NOTE: Use the current window location's origin for absolute URLs if needed, but relative routes are safer.
             $('#exportCsv').attr('href', "{{ route('admin.reports.export') }}?format=csv&month=" + encodeURIComponent(month));
             $('#exportPdf').attr('href', "{{ route('admin.reports.export') }}?format=pdf&month=" + encodeURIComponent(month));
         }
@@ -139,10 +133,8 @@
 
         $('#generateBtn').on('click', function() {
             var month = $('#reportMonth').val();
-            // Show loading state and disable button
             $('#generateBtn').prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Generating...');
             
-            // Clear previous results and show temporary message
             document.getElementById('reportResults').innerHTML = '<div class="text-center py-5 text-secondary"><i class="fas fa-spinner fa-spin fa-2x"></i><p class="mt-3">Fetching data...</p></div>';
 
             $.get("{{ route('admin.reports.data') }}", { month: month })
@@ -152,7 +144,6 @@
                 })
                 .fail(function(err) {
                     console.error(err);
-                    // Using a modal/custom alert style instead of window.alert
                     document.getElementById('reportResults').innerHTML = '<div class="alert alert-danger text-center"><i class="fas fa-times-circle me-2"></i> Failed to generate analytics. Please check the console for errors or try again.</div>';
                 })
                 .always(function() {

@@ -18,7 +18,6 @@ class ReportsController extends Controller
         return view('dashboard.reports', compact('month'));
     }
 
-    // Return JSON data for a given month (YYYY-MM)
     public function data(Request $request)
     {
         $month = $request->input('month', Carbon::now()->format('Y-m'));
@@ -31,7 +30,6 @@ class ReportsController extends Controller
             $month = Carbon::now()->format('Y-m');
         }
 
-        // Stock usage: sum of quantities scheduled/created during the month grouped by medicine
         $usageRows = MedicineIntake::select('medicine_id', DB::raw('SUM(quantity) as used'))
             ->whereBetween('created_at', [$start->toDateTimeString(), $end->toDateTimeString()])
             ->groupBy('medicine_id')
@@ -47,7 +45,6 @@ class ReportsController extends Controller
             ];
         }
 
-        // Shortages: aggregated stock per medicine name that is below threshold
         $threshold = 10;
         $shortages = Medicine::select('medicine_name', DB::raw('SUM(stock) as stock'))
             ->groupBy('medicine_name')
@@ -57,14 +54,12 @@ class ReportsController extends Controller
                 return ['medicine_name' => $m->medicine_name, 'stock' => (int)$m->stock];
             })->values();
 
-        // Expiries within the month
         $expiries = Medicine::whereBetween('expiry_date', [$start->toDateString(), $end->toDateString()])
             ->get(['id', 'medicine_name', 'batch_number', 'expiry_date'])
             ->map(function($m) {
                 return ['id' => $m->id, 'medicine_name' => $m->medicine_name, 'batch_number' => $m->batch_number, 'expiry_date' => $m->expiry_date];
             })->values();
 
-        // Returns within the month
         $returns = MedicineReturn::whereBetween('returned_at', [$start->toDateTimeString(), $end->toDateTimeString()])
             ->with('medicine')
             ->get()
@@ -103,7 +98,6 @@ class ReportsController extends Controller
             $month = Carbon::now()->format('Y-m');
         }
 
-        // reuse logic from data()
         $usageRows = MedicineIntake::select('medicine_id', DB::raw('SUM(quantity) as used'))
             ->whereBetween('created_at', [$start->toDateTimeString(), $end->toDateTimeString()])
             ->groupBy('medicine_id')
@@ -156,7 +150,6 @@ class ReportsController extends Controller
 
             $callback = function() use ($usage, $shortages, $expiries, $returns, $month) {
                 $out = fopen('php://output', 'w');
-                // Header
                 fputcsv($out, ["Inventory Report", $month]);
                 fputcsv($out, []);
 
@@ -185,7 +178,7 @@ class ReportsController extends Controller
             return response()->stream($callback, 200, $headers);
         }
 
-        // PDF export: try to use Dompdf if available, otherwise return HTML view
+        // PDF export Dompdf
         $html = view('dashboard.report_pdf', compact('usage', 'shortages', 'expiries', 'returns', 'month'))->render();
 
         if (class_exists('\Dompdf\Dompdf')) {
@@ -201,7 +194,6 @@ class ReportsController extends Controller
             ]);
         }
 
-        // Fallback: return HTML that can be printed to PDF by the browser
         return response($html);
     }
 }

@@ -14,7 +14,6 @@ class ActivityLog extends Model
     ];
 
     protected $casts = [
-        // no casts required for removed meta
     ];
 
     public function user()

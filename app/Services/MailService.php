@@ -17,13 +17,11 @@ class MailService
 
     public function sendEmail($to, $subject, $content, $fromEmail = null, $fromName = null)
     {
-        // Allow specifying a SendGrid-verified fallback sender via env
         $sendgridFallbackFrom = env('SENDGRID_FROM_EMAIL');
 
         $fromEmail = $fromEmail ?: $sendgridFallbackFrom ?: config('mail.from.address');
         $fromName = $fromName ?: config('mail.from.name');
 
-        // If API key is missing, avoid attempting the HTTP call
         if (empty($this->apiKey)) {
             Log::warning('SendGrid API key not configured; email not sent', ['to' => $to, 'subject' => $subject]);
 
@@ -75,8 +73,6 @@ class MailService
                     'response' => $response->json()
                 ];
             } else {
-                // If SendGrid rejects the request due to unverified "from" address,
-                // try a fallback verified sender if provided, otherwise log actionable help.
                 $status = $response->status();
                 $body = $response->body();
 
@@ -87,9 +83,7 @@ class MailService
                     'response' => $body
                 ]);
 
-                // Detect common SendGrid sender identity error
                 if ($status === 403 && stripos($body, 'sender identity') !== false || stripos($body, 'from address') !== false) {
-                    // If a SENDGRID_FROM_EMAIL fallback is configured and different, retry once
                     if (!empty($sendgridFallbackFrom) && strcasecmp($sendgridFallbackFrom, $fromEmail) !== 0) {
                         Log::info('Retrying SendGrid send with fallback SENDGRID_FROM_EMAIL', ['fallback' => $sendgridFallbackFrom]);
 
@@ -113,12 +107,10 @@ class MailService
                                 'response' => $retry->json()
                             ];
                         }
-                        // set body/status to retry result for return below
                         $status = $retry->status();
                         $body = $retry->body();
                     }
 
-                    // No fallback or retry failed: log detailed actionable error
                     Log::error('SendGrid rejected email due to unverified sender identity. Verify the sender in SendGrid or set SENDGRID_FROM_EMAIL to a verified address.', [
                         'to' => $to,
                         'subject' => $subject,

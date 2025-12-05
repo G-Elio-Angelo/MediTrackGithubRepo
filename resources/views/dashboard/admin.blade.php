@@ -2,7 +2,6 @@
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/meditrack-theme.css') }}">
-{{-- NOTE: Assuming you have Font Awesome Pro configured or use the free version. The icons below use 'fal' (light) or 'far' (regular) for a more minimal look. If you don't have it, change 'fal' to 'fas'. --}}
 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" xintegrity="sha384-AYmEC3Yw5U5dD7i7t53X30m46O7hF6+I23g9M+B4hL2t8F9gYt5Tz30O+gR7/d6KxYj" crossorigin="anonymous">
 
 
@@ -32,26 +31,19 @@
             </a>
         </nav>
 
-        {{-- START: Updated Sidebar Footer Section --}}
         <div class="mtk-sidebar-bottom-actions">
-            {{-- Logout Form placed prominently at the bottom --}}
             <form method="POST" action="{{ route('logout') }}" class="w-100 mb-2">
                 @csrf
-                {{-- Using mtk-btn-secondary for consistent theme styling, but full width (w-100) --}}
                 <button type="submit" class="mtk-btn-secondary w-100">
                     <i class="fal fa-sign-out"></i> Logout
                 </button>
             </form>
         </div>
-        {{-- END: Updated Sidebar Footer Section --}}
     </aside>
 
-    {{-- MAIN --}}
     <main class="mtk-main">
         <header class="mtk-topbar">
             <div class="mtk-search">
-                <i class="fal fa-search mtk-search-icon"></i>
-                <input type="text" placeholder="Search medicines, users..." aria-label="Search">
             </div>
 
             <div class="mtk-top-right">
@@ -204,20 +196,6 @@
                         </div>
                     </div>
 
-                    {{-- NEW: User Role Distribution Chart --}}
-                    <div class="panel">
-                        <div class="panel-head">
-                            <h5 class="panel-title">👥 User Role Distribution</h5>
-                        </div>
-                        <div class="panel-body">
-                            <div class="chart-wrapper chart-wrapper-pie">
-                                <canvas id="userRolesChart"></canvas>
-                            </div>
-                            <div class="text-center mt-3">
-                                <p class="text-muted"><i class="fal fa-chart-pie"></i> Breakdown of registered accounts.</p>
-                            </div>
-                        </div>
-                    </div>
 
                 </div>
             </div>
@@ -233,10 +211,7 @@ $dashboardData = [
     'medicineStocks' => $medicineStocks,
     'lowStockNames' => $lowStockNames,
     'lowStockValues' => $lowStockValues,
-    'userRoleCounts' => [
-        'admin' => ($userRoleCounts['admin'] ?? 0),
-        'user' => ($userRoleCounts['user'] ?? 0)
-    ],
+    
     'nearExpiryNames' => isset($nearExpiry) ? $nearExpiry->pluck('medicine_name')->values() : [],
     'nearExpiryDates' => isset($nearExpiry) ? $nearExpiry->pluck('expiry_date')->values() : []
 ];

@@ -29,7 +29,6 @@ class AdminController extends Controller
         // total unique medicine names
         $totalMedicines = $medicines->count();
 
-        // Low stock per medicine (aggregated)
         $lowStockThreshold = 10;
 
         $lowStock = Medicine::selectRaw('medicine_name, SUM(stock) as stock, MIN(expiry_date) as expiry_date')
@@ -39,11 +38,9 @@ class AdminController extends Controller
 
         $lowStockCount = $lowStock->count();
 
-        // Near-expiry: medicines whose nearest expiry is within the next 10 days
         $today = Carbon::today();
         $threshold = $today->copy()->addDays(10);
 
-        // $medicines is aggregated with MIN(expiry_date) as expiry_date
         $nearExpiry = $medicines->filter(function ($m) use ($threshold, $today) {
             if (empty($m->expiry_date)) return false;
             try {
@@ -56,7 +53,6 @@ class AdminController extends Controller
 
         $nearExpiryCount = $nearExpiry->count();
 
-        // Combined notifications: if there are low-stock items OR near-expiry items, notify the logged-in admin
         if (($lowStockCount > 0 || $nearExpiryCount > 0) && Auth::check()) {
             $admin = Auth::user();
 
@@ -73,14 +69,12 @@ class AdminController extends Controller
             $smsMessage = "Alert! ";
             $smsMessage .= implode(' | ', $parts);
 
-            // Send combined SMS
             try {
                 $sms->send($admin->phone_number, $smsMessage);
             } catch (\Throwable $e) {
                 Log::error('Failed to send combined alert SMS', ['error' => $e->getMessage()]);
             }
 
-            // Prepare combined email
             try {
                 $recipient = $admin->email ?? env('ADMIN_EMAIL', null);
                 if (!empty($recipient)) {
@@ -120,13 +114,9 @@ class AdminController extends Controller
         $lowStockNames = $lowStock->pluck('medicine_name')->values();
         $lowStockValues = $lowStock->pluck('stock')->values();
 
-        // Role counts for user distribution chart
-        $userRoleCounts = [
-            'admin' => $users->where('role', 'admin')->count(),
-            'user' => $users->where('role', 'user')->count(),
-        ];
 
-        // Medicine nearest expiry dates (matching $medicines order)
+
+        // Medicine nearest expiry dates
         $medicineExpiries = $medicines->pluck('expiry_date')->values();
 
         // Prepare non-admin users and a medicines list (nearest-expiry batch per name) for intake panel
@@ -144,13 +134,12 @@ class AdminController extends Controller
             'totalMedicines', 'medicines',
             'lowStockCount', 'lowStock',
             'userNames', 'medicineNames', 'medicineStocks', 'lowStockNames', 'lowStockValues',
-            'nonAdminUsers', 'intakeMedicines', 'userRoleCounts', 'medicineExpiries', 'nearExpiry'
+            'nonAdminUsers', 'intakeMedicines', 'medicineExpiries', 'nearExpiry'
         ));
     }
 
     public function storeIntake(Request $request)
     {
-        // Log incoming request for debugging
         Log::info('storeIntake called', $request->all());
 
         $validated = $request->validate([
@@ -178,7 +167,6 @@ class AdminController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Invalid intake time format.');
         }
-        // Use the exact intake time provided by the user — do not auto-round to interval.
         $validated['intake_time'] = $intakeDt->toDateTimeString();
         $qty = (int) $validated['quantity'];
 
@@ -198,7 +186,6 @@ class AdminController extends Controller
                 'quantity' => $qty,
             ]);
 
-            // If an interval was supplied in the scheduling form, save it to the medicine for future use
             if ($request->filled('interval_minutes')) {
                 $mi = Medicine::find($validated['medicine_id']);
                 if ($mi) {
@@ -207,7 +194,6 @@ class AdminController extends Controller
                 }
             }
 
-            // Log activity
             ActivityLogger::log('intake.scheduled', [
                 'intake_id' => $intake->id,
                 'user_id' => $user->user_id,
@@ -216,7 +202,6 @@ class AdminController extends Controller
                 'intake_time' => $validated['intake_time'],
             ]);
 
-            // Decrement stock
             $medicine->stock = max(0, $medicine->stock - $qty);
             $medicine->save();
 
@@ -504,7 +489,6 @@ class AdminController extends Controller
         $validated = $request->validate([
             'quantity' => 'required|integer|min:1',
             'remarks' => 'nullable|string|max:2000',
-            'action' => 'required|in:remove,add',
             'batch_number' => 'nullable|string|max:255',
             'supplier_name' => 'nullable|string|max:255',
             'returned_at' => 'nullable|date',
@@ -542,21 +526,16 @@ class AdminController extends Controller
                 'returned_at' => $returnedAt,
             ]);
 
-            // Adjust stock: 'remove' => return to supplier (decrease stock), 'add' => return to inventory (increase)
-            if ($validated['action'] === 'remove') {
-                $medicine->stock = max(0, $medicine->stock - $validated['quantity']);
-            } else {
-                $medicine->stock = $medicine->stock + $validated['quantity'];
-            }
+            // Adjust stock: always decrease for a recorded return
+            $medicine->stock = max(0, $medicine->stock - $validated['quantity']);
             $medicine->save();
 
             DB::commit();
 
-            Log::info('Medicine return recorded', ['return_id' => $mr->id, 'medicine_id' => $medicine->id, 'action' => $validated['action'], 'qty' => $validated['quantity']]);
+            Log::info('Medicine return recorded', ['return_id' => $mr->id, 'medicine_id' => $medicine->id, 'qty' => $validated['quantity']]);
             ActivityLogger::log('medicine.returned', [
                 'return_id' => $mr->id,
                 'medicine_id' => $medicine->id,
-                'action' => $validated['action'],
                 'quantity' => $validated['quantity'],
             ]);
             return redirect()->route('admin.medicines')->with('success', 'Medicine return recorded.');

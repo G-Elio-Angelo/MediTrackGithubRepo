@@ -20,7 +20,6 @@
                 </div>
             @endif
 
-            {{-- Error messages --}}
             @if($errors->any())
                 <div class="alert alert-danger text-center" role="alert">
                     {{ $errors->first() }}
@@ -33,9 +32,13 @@
                     <label for="otp" class="form-label text-muted d-block text-center fw-bold">Enter Code Below</label>
                     <input type="text" name="otp" id="otp" maxlength="6" 
                            class="form-control text-center fs-3 otp-input" 
-                           placeholder="------" required pattern="\d{6}">
+                           placeholder="------" pattern="\d{6}">
                     <small class="text-muted d-block text-center mt-2">
-                        OTP expires in 5 minutes. <a href="#" class="resend-link">Resend Code</a>
+                        OTP expires in 5 minutes.
+                        <form method="POST" action="{{ route('auth.otp.resend') }}" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-link p-0 align-baseline resend-link">Resend Code</button>
+                        </form>
                     </small>
                 </div>
                 <div class="d-grid">

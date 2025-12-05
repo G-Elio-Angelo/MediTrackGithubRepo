@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 class SendIntakeReminders extends Command
 {
-    protected $signature = 'intakes:remind {--minutes=15 : How many minutes before intake to notify}';
+protected $signature = 'send:intakes-reminders {--minutes=15}';
     protected $description = 'Send SMS reminders to patients shortly before their scheduled intake time.';
 
     protected $sms;
@@ -29,12 +29,14 @@ class SendIntakeReminders extends Command
         $now = Carbon::now();
         $windowEnd = $now->copy()->addMinutes($minutes);
 
-        Log::info('SendIntakeReminders: scanning intakes', ['now' => $now->toDateTimeString(), 'window_end' => $windowEnd->toDateTimeString()]);
+        Log::info('SendIntakeReminders: scanning intakes', 
+        ['now' => $now->toDateTimeString(), 
+        'window_end' => $windowEnd->toDateTimeString()]);
 
         $intakes = MedicineIntake::with('user','medicine')
             ->where('status', false)
             ->where('sms_notified', false)
-            ->whereBetween('intake_time', [$now->toDateTimeString(), $windowEnd->toDateTimeString()])
+            ->whereBetween('intake_time', [$now, $windowEnd])
             ->get();
 
         foreach ($intakes as $intake) {
@@ -62,7 +64,9 @@ class SendIntakeReminders extends Command
 
             } catch (\Throwable $e) {
                 DB::rollBack();
-                Log::error('SendIntakeReminders: failed to send sms for intake', ['intake_id' => $intake->id, 'error' => $e->getMessage()]);
+                Log::error('SendIntakeReminders: failed to send sms for intake', 
+                ['intake_id' => $intake->id, 
+                'error' => $e->getMessage()]);
             }
         }
 

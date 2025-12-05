@@ -2,7 +2,6 @@
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/meditrack-theme.css') }}">
-{{-- NOTE: Assuming you have Font Awesome Pro configured or use the free version. The icons below use 'fal' (light) or 'far' (regular) for a more minimal look. If you don't have it, change 'fal' to 'fas'. --}}
 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" xintegrity="sha384-AYmEC3Yw5U5dD7i7t53X30m46O7hF6+I23g9M+B4hL2t8F9gYt5Tz30O+gR7/d6KxYj" crossorigin="anonymous">
 
 
@@ -43,22 +42,17 @@
                 </button>
             </form>
         </div>
-        {{-- END: Updated Sidebar Footer Section --}}
     </aside>
 
 
     <main class="mtk-main">
-        {{-- TOPBAR --}}
         <header class="mtk-topbar">
             <div class="mtk-search">
-                <i class="fal fa-search mtk-search-icon"></i>
-                <input type="text" placeholder="Search inventory..." aria-label="Search">
             </div>
 
             <div class="mtk-top-right">
                 @auth
                 <div class="mtk-user">
-                    {{-- Assuming first_name is available, showing first two letters, e.g., MI for Michael I --}}
                     <div class="mtk-avatar">{{ strtoupper(substr(Auth::user()->first_name, 0, 1) . substr(Auth::user()->last_name ?? '', 0, 1)) }}</div> 
                     <div class="mtk-user-meta">
                         <div class="mtk-user-name">{{ Auth::user()->first_name ?? 'Admin' }}</div>
@@ -67,7 +61,6 @@
                 @endauth
             </div>
         </header>
-        {{-- END TOPBAR --}}
 
         <section class="mtk-content">
             <div class="mtk-hero">
@@ -75,12 +68,10 @@
                 <p class="muted">View, track, and manage all medicine stocks, batches, and expiry dates.</p>
             </div>
 
-            {{-- ALERTS --}}
             @if(session('success'))
                 <div class="alert alert-success mtk-alert"><i class="fal fa-check-circle"></i> {{ session('success') }}</div>
             @endif
 
-            {{-- CURRENT STOCK TABLE --}}
             <div class="panel">
                 <div class="panel-head">
                     <h5 class="panel-title">Current Medicine Stock</h5>
@@ -124,7 +115,6 @@
                                             </span>
                                         </td>
                                         <td class="mtk-table-actions">
-                                            {{-- Edit Button (Icon Button) --}}
                                             <button 
                                                 type="button" 
                                                 class="icon-btn text-primary me-1" 
@@ -134,17 +124,15 @@
                                                 <i class="fal fa-pencil-alt"></i>
                                             </button>
 
-                                            {{-- Return/Restock Button (Icon Button) --}}
                                             <button 
                                                 type="button"
                                                 class="icon-btn text-warning me-1"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#returnMedicineModal{{ $medicine->id }}"
-                                                title="Record Return/Restock">
+                                                title="Record Stock Adjustment">
                                                 <i class="fal fa-undo"></i>
                                             </button>
 
-                                            {{-- Delete Form (Icon Button) --}}
                                             <form action="{{ route('admin.medicines.delete', $medicine->id) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
@@ -163,13 +151,11 @@
 
             ---
 
-            {{-- RETURN HISTORY PANEL --}}
             <div class="panel mt-4">
                 <div class="panel-head">
                     <h5 class="panel-title">Returned Medicines History</h5>
                 </div>
                 <div class="panel-body">
-                    {{-- Check if $returns variable is set and has content --}}
                     @if(isset($returns) && $returns->isNotEmpty())
                     <div class="table-responsive">
                         <table class="table table-striped table-hover align-middle datatable">
@@ -179,7 +165,7 @@
                                     <th>Medicine</th>
                                     <th>Batch</th>
                                     <th>Quantity</th>
-                                    <th>Action Type</th> {{-- Added action type column for clarity --}}
+                                    {{-- Action Type column removed --}}
                                     <th>Supplier</th>
                                     <th>Remarks</th>
                                     <th>Action Date</th> {{-- Renamed Returned At for clarity --}}
@@ -192,16 +178,7 @@
                                         <td>{{ $r->medicine->medicine_name ?? '—' }}</td>
                                         <td>{{ $r->batch_number ?? '—' }}</td>
                                         <td>{{ $r->quantity }}</td>
-                                        {{-- Display action type based on value (assuming a column 'action_type' exists) --}}
-                                        <td>
-                                            @if($r->action_type == 'remove')
-                                                <span class="badge bg-danger"><i class="fal fa-minus-circle"></i> Removal</span>
-                                            @elseif($r->action_type == 'add')
-                                                <span class="badge bg-success"><i class="fal fa-plus-circle"></i> Restock</span>
-                                            @else
-                                                <span class="badge bg-secondary">Unknown</span>
-                                            @endif
-                                        </td>
+                                        {{-- Action Type removed from display --}}
                                         <td>{{ $r->supplier_name ?? '—' }}</td>
                                         <td>{{ $r->remarks ?? '—' }}</td>
                                         <td>{{ $r->returned_at ? \Carbon\Carbon::parse($r->returned_at)->format('Y-m-d H:i') : '—' }}</td>
@@ -212,7 +189,7 @@
                     </div>
                     @else
                         <div class="alert alert-info mtk-alert">
-                            <i class="fal fa-info-circle"></i> No returned or restocked medicine transactions recorded yet.
+                            <i class="fal fa-info-circle"></i> No return transactions recorded yet.
                         </div>
                     @endif
                 </div>
@@ -222,7 +199,6 @@
 </div>
 
 
-{{-- ADD MEDICINE MODAL --}}
 <div class="modal fade" id="addMedicineModal" tabindex="-1" aria-labelledby="addMedicineLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content mtk-modal-content">
@@ -315,16 +291,14 @@
     </div>
 @endforeach
 
-{{-- RETURN/RESTOCK MEDICINE MODALS (One for each medicine) --}}
 @foreach($medicines as $medicine)
   <div class="modal fade" id="returnMedicineModal{{ $medicine->id }}" tabindex="-1" aria-labelledby="returnMedicineLabel{{ $medicine->id }}" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content mtk-modal-content">
-        {{-- IMPORTANT: The route for return/restock must handle the quantity and action type to update the stock --}}
         <form action="{{ route('admin.medicines.return', $medicine->id) }}" method="POST">
           @csrf
           <div class="modal-header mtk-modal-header">
-            <h5 class="modal-title" id="returnMedicineLabel{{ $medicine->id }}"><i class="fal fa-undo-alt"></i> Record Return/Restock: {{ $medicine->medicine_name }}</h5>
+            <h5 class="modal-title" id="returnMedicineLabel{{ $medicine->id }}"><i class="fal fa-undo-alt"></i> Record Stock Adjustment: {{ $medicine->medicine_name }}</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -346,19 +320,14 @@
               <div>
                 <div class="form-check form-check-inline">
                   {{-- Action: Remove from Stock --}}
-                  <input class="form-check-input" type="radio" name="action_type" id="actionRemove{{ $medicine->id }}" value="remove" checked> 
+                  <input class="form-check-input" type="radio" name="action" id="actionRemove{{ $medicine->id }}" value="remove" checked> 
                   <label class="form-check-label" for="actionRemove{{ $medicine->id }}"><i class="fal fa-minus-circle text-danger"></i> Remove from Stock (Return to Supplier/Disposal)</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  {{-- Action: Add to Stock --}}
-                  <input class="form-check-input" type="radio" name="action_type" id="actionAdd{{ $medicine->id }}" value="add">
-                  <label class="form-check-label" for="actionAdd{{ $medicine->id }}"><i class="fal fa-plus-circle text-success"></i> Add to Stock (Patient Return/Restock)</label>
                 </div>
               </div>
             </div>
             <div class="mb-3">
               <label class="form-label">Remarks</label>
-              <textarea name="remarks" class="form-control" rows="3" placeholder="Reason for return/restock..."></textarea>
+              <textarea name="remarks" class="form-control" rows="3" placeholder="Reason for adjustment..."></textarea>
             </div>
             <div class="mb-3">
               <label class="form-label">Date/Time of Action</label>

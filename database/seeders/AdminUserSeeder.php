@@ -20,7 +20,7 @@ class AdminUserSeeder extends Seeder
                 'email' => 'admin@meditrack.com',
                 'password' => Hash::make('admin123'), // default password
                 'phone_number' => '09171234567',
-                'role' => 'admin', // admin role
+                'role' => 'admin', 
             ]
         );
     }

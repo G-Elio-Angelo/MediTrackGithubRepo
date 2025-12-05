@@ -22,7 +22,6 @@ class ActivityLogger
                 'ip_address' => Request::ip(),
             ]);
         } catch (\Throwable $e) {
-            // avoid breaking primary flow if logging fails
             \Illuminate\Support\Facades\Log::error('ActivityLogger failed: ' . $e->getMessage());
         }
     }

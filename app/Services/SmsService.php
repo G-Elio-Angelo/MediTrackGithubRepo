@@ -18,9 +18,6 @@ class SmsService
         $this->fakeMode = env('SMS_FAKE', config('app.env') === 'local');
     }
 
-    /**
-     * Send SMS to single or multiple recipients
-     */
    public function sendSMS($phoneNumber, $message)
 {
     if ($this->fakeMode || empty($this->apiToken)) {

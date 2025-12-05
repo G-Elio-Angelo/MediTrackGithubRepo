@@ -103,6 +103,42 @@ class AuthController extends Controller
         return redirect()->route($redirectRoute)->with('success', 'Login successful!');
     }
 
+    /**
+     * Resend OTP to the user stored in session (otp_user_id).
+     */
+    public function resendOtp(Request $request, SmsService $sms)
+    {
+        $userId = session('otp_user_id');
+        if (!$userId) {
+            return redirect()->route('login')->with('error', 'Session expired. Please login again.');
+        }
+
+        $user = User::find($userId);
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'User not found.');
+        }
+
+        $code = rand(100000, 999999);
+
+        OtpCode::create([
+            'user_id' => $user->user_id,
+            'code' => $code,
+            'expires_at' => Carbon::now()->addMinutes(5),
+        ]);
+
+        $sendResult = null;
+        if ($user->phone_number) {
+            // Prefer sendOTP which uses the provider's OTP endpoint
+            $sendResult = $sms->sendOTP($user->phone_number, "Your MediTrack OTP is: {$code}");
+        }
+
+        if (is_array($sendResult) && isset($sendResult['provider']) && $sendResult['provider'] === 'local-log') {
+            session()->flash('debug_otp', $code);
+        }
+
+        return redirect()->route('auth.otp.form')->with('status', 'A new OTP has been sent to your phone.');
+    }
+
     public function showRegister(){
          return view('auth.register'); 
         }

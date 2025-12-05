@@ -2,7 +2,6 @@
 
 @section('content')
 
-{{-- Custom CSS for subtle colors and font consistency (assuming a clean, modern font) --}}
 <style>
     .bg-light-blue { background-color: #f5f8fa; }
     .text-primary-dark { color: #0056b3; }
@@ -17,11 +16,9 @@
     }
 </style>
 
-{{-- Main Wrapper with a clean, light background for contrast --}}
 <div class="container-fluid py-5 bg-light-blue" style="min-height: 100vh;">
     <div class="container">
         
-        {{-- Page Header: Enhanced contrast and spacing --}}
         <div class="d-flex justify-content-between align-items-center mb-5 pb-3 border-bottom">
             <div>
                 <h1 class="fw-bolder text-dark mb-1"><i class="fas fa-calendar-alt text-primary me-2"></i>My Medication Schedule</h1>
@@ -40,11 +37,9 @@
                 <div class="card shadow-lg border-0 rounded-4 bg-white h-100 card-hover">
                     <div class="card-body text-center p-4">
                         
-                        {{-- Avatar: Larger, more prominent, with subtle inner shadow --}}
                         <div class="mb-4 position-relative d-inline-block">
                             <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center mx-auto"
                                     style="width: 110px; height: 110px; font-size: 40px; border: 4px solid #fff; box-shadow: 0 0 20px rgba(0,0,0,0.1), inset 0 0 5px rgba(0,0,0,0.05);">
-                                {{ strtoupper(substr(auth()->user()->full_name, 0, 1)) }}
                             </div>
                             <span class="position-absolute bottom-0 end-0 p-2 bg-success border border-white rounded-circle">
                                 <span class="visually-hidden">Active</span>
@@ -54,7 +49,6 @@
                         <h4 class="fw-bold text-dark mb-1">{{ auth()->user()->full_name }}</h4>
                         <div class="text-start p-3 rounded-4 mb-4" style="background-color: #f8f9fa;">
                             
-                            {{-- Contact Info Boxes --}}
                             <div class="mb-3">
                                 <span class="text-secondary small fw-medium d-block mb-1"><i class="fas fa-envelope me-2"></i>Email</span>
                                 <p class="fw-semibold text-dark small mb-0 text-break">{{ auth()->user()->email }}</p>
@@ -93,7 +87,6 @@
 
                     <div class="card-body p-4">
 
-                        {{-- Success Alert --}}
                         @if(session('success'))
                             <div class="alert alert-success alert-dismissible fade show rounded-3 border-0 shadow-sm mb-4 fw-medium" role="alert">
                                 <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
@@ -154,7 +147,6 @@
                                                             </button>
                                                         </form>
 
-                                                        {{-- Return Button (using a lighter outline style) --}}
                                                         <button class="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-medium"
                                                                 data-bs-toggle="modal"
                                                                 data-bs-target="#returnModal{{ $intake->id }}">
@@ -169,7 +161,6 @@
                                             </td>
                                         </tr>
 
-                                        {{-- Modal: Kept Logic, Updated UI for modern look --}}
                                         <div class="modal fade" id="returnModal{{ $intake->id }}" tabindex="-1">
                                             <div class="modal-dialog modal-dialog-centered">
                                                 <div class="modal-content border-0 shadow-lg rounded-4">

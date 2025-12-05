@@ -13,6 +13,7 @@ Route::get('login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('login', [AuthController::class, 'loginStep'])->name('login.post');
 Route::get('otp', [AuthController::class, 'showOtpForm'])->name('auth.otp.form');
 Route::post('otp', [AuthController::class, 'verifyOtp'])->name('auth.otp.verify');
+Route::post('otp/resend', [AuthController::class, 'resendOtp'])->name('auth.otp.resend');
 Route::get('register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('register', [AuthController::class, 'register'])->name('register.post');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');

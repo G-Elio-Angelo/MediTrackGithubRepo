@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-{{-- Include CSS and Font Awesome for consistent styling --}}
 <link rel="stylesheet" href="{{ asset('css/meditrack-theme.css') }}">
 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" xintegrity="sha384-AYmEC3Yw5U5dD7i7t53X30m46O7hF6+I23g9M+B4hL2t8F9gYt5Tz30O+gR7/d6KxYj" crossorigin="anonymous">
 
@@ -32,27 +31,21 @@
             </a>
         </nav>
 
-        {{-- START: Updated Sidebar Footer Section --}}
         <div class="mtk-sidebar-bottom-actions">
             {{-- Logout Form placed prominently at the bottom --}}
             <form method="POST" action="{{ route('logout') }}" class="w-100 mb-2">
                 @csrf
-                {{-- Using mtk-btn-secondary for consistent theme styling, but full width (w-100) --}}
                 <button type="submit" class="mtk-btn-secondary w-100">
                     <i class="fal fa-sign-out"></i> Logout
                 </button>
             </form>
             
         </div>
-        {{-- END: Updated Sidebar Footer Section --}}
     </aside>
 
     <main class="mtk-main">
-        {{-- TOPBAR --}}
         <header class="mtk-topbar">
             <div class="mtk-search">
-                <i class="fal fa-search mtk-search-icon"></i>
-                <input type="text" placeholder="Search intakes..." aria-label="Search">
             </div>
 
             <div class="mtk-top-right">
@@ -67,7 +60,6 @@
                 @endauth
             </div>
         </header>
-        {{-- END TOPBAR --}}
 
         <section class="mtk-content">
             <div class="mtk-hero">
@@ -75,7 +67,6 @@
                 <p class="muted">Monitor and schedule patient medicine consumption records.</p>
             </div>
 
-            {{-- ALERTS & MESSAGES --}}
             @if(session('success'))
                 <div class="alert alert-success mtk-alert"><i class="fal fa-check-circle"></i> {{ session('success') }}</div>
             @endif
@@ -106,7 +97,6 @@
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
-                        {{-- Used the defined table classes --}}
                         <table class="table table-striped table-hover align-middle datatable">
                             <thead>
                                 <tr>
@@ -212,7 +202,6 @@
     </div>
 </div>
 
-{{-- Custom Modal for Deletion Confirmation (Replacing alert/confirm) --}}
 <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content mtk-modal-content">
@@ -238,7 +227,6 @@
 @endsection
 
 @section('scripts')
-{{-- Ensure you include DataTables initialization if using the 'datatable' class --}}
 <script>
     $(document).ready(function() {
         try {
