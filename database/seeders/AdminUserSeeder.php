@@ -17,9 +17,9 @@ class AdminUserSeeder extends Seeder
             ['email' => 'admin@meditrack.com'], // checks if admin exists
             [
                 'username' => 'Admin',
-                'email' => 'admin@meditrack.com',
+                'email' => '23-36779@g.batstate-u.edu.ph',
                 'password' => Hash::make('admin123'), // default password
-                'phone_number' => '09171234567',
+                'phone_number' => '09666934242',
                 'role' => 'admin', 
             ]
         );

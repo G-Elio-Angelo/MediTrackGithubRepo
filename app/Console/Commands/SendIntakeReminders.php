@@ -26,7 +26,7 @@ protected $signature = 'send:intakes-reminders {--minutes=15}';
         $minutes = (int)$this->option('minutes');
         if ($minutes <= 0) $minutes = 15;
 
-        $now = Carbon::now();
+        $now = Carbon::now()->subMinute();
         $windowEnd = $now->copy()->addMinutes($minutes);
 
         Log::info('SendIntakeReminders: scanning intakes', 

@@ -34,17 +34,32 @@
                            class="form-control text-center fs-3 otp-input" 
                            placeholder="------" pattern="\d{6}">
                     <small class="text-muted d-block text-center mt-2">
-                        OTP expires in 5 minutes.
-                        <form method="POST" action="{{ route('auth.otp.resend') }}" class="d-inline">
-                            @csrf
-                            <button type="submit" class="btn btn-link p-0 align-baseline resend-link">Resend Code</button>
-                        </form>
+                        OTP expires in 5 minutes. <button type="button" id="resendBtn" class="btn btn-link p-0 align-baseline resend-link">Resend Code</button>
                     </small>
                 </div>
                 <div class="d-grid">
                     <button type="submit" class="btn btn-primary btn-lg verify-btn">Verify</button> 
                 </div>
+
             </form>
+
+            {{-- Hidden resend form (kept outside main form to avoid nested forms) --}}
+            <form id="resendForm" method="POST" action="{{ route('auth.otp.resend') }}" style="display:none;">
+                @csrf
+            </form>
+
+            <script>
+                (function(){
+                    var btn = document.getElementById('resendBtn');
+                    if (btn) {
+                        btn.addEventListener('click', function(e){
+                            e.preventDefault();
+                            var f = document.getElementById('resendForm');
+                            if (f) f.submit();
+                        });
+                    }
+                })();
+            </script>
 
             <div class="mt-4 text-center">
                 <a href="{{ route('login') }}" class="back-link">
