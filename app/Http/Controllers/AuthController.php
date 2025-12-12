@@ -11,11 +11,16 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Cache;
 
 class AuthController extends Controller
 {
     public function showLogin()
     {
+        if (Auth::check()) {
+        return redirect()->route(Auth::user()->role === 'admin' ? 'admin.dashboard' : 'user.dashboard')
+            ->with('error', 'You are already logged in. Logout first to switch accounts.');
+    }
         if (!session()->isStarted()) {
             session()->start();
         }
@@ -26,7 +31,10 @@ class AuthController extends Controller
 
     public function loginStep(Request $request, SmsService $sms)
     {
-        // Log debug info to diagnose CSRF/session issues
+         if (Auth::check()) {
+        return redirect()->route(Auth::user()->role === 'admin' ? 'admin.dashboard' : 'user.dashboard')
+            ->withErrors(['email' => 'You are already logged in. Logout first to switch accounts.']);
+        }
         Log::info('loginStep debug start', [
             'has_token' => $request->has('_token'),
             'request_token' => $request->_token ?? null,
@@ -65,6 +73,9 @@ class AuthController extends Controller
     }
 
     public function showOtpForm(){
+        if (Auth::check()) {
+        return redirect()->route(Auth::user()->role === 'admin' ? 'admin.dashboard' : 'user.dashboard');
+    }
          return view('auth.otp'); 
         }
 
@@ -95,6 +106,15 @@ class AuthController extends Controller
 
         Auth::login($user);
         session()->forget('otp_user_id');
+
+        // Create a per-login token so we can detect stale/changed sessions
+        try {
+            $loginToken = bin2hex(random_bytes(16));
+        } catch (\Exception $e) {
+            $loginToken = uniqid('lt_', true);
+        }
+        session(['login_token' => $loginToken]);
+        Cache::put("user:{$user->user_id}:login_token", $loginToken, now()->addDays(30));
 
         \App\Services\ActivityLogger::log('user.login', ['user_id' => $user->user_id]);
 
@@ -179,6 +199,12 @@ class AuthController extends Controller
     {
         $userId = Auth::id();
         \App\Services\ActivityLogger::log('user.logout', ['user_id' => $userId]);
+
+        // Clear per-login token so other tabs/sessions get invalidated
+        if ($userId) {
+            Cache::forget("user:{$userId}:login_token");
+            session()->forget('login_token');
+        }
 
         Auth::logout();
 

@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 use App\Models\Medicine;
+use App\Models\User;
 use App\Models\MedicineIntake;
 use App\Models\MedicineReturn;
 use Carbon\Carbon;
@@ -12,16 +13,15 @@ use App\Services\ActivityLogger;
 
 class DashboardController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function index(Request $request){
-        // If a normal (non-authenticated) metrics dashboard is needed
-        if (!Auth::check() || Auth::user()->role !== 'user') {
-            $total = Medicine::count();
-            $low = Medicine::where('stock','<',10)->count();
-            $expiring = Medicine::whereBetween('expiry_date',[Carbon::now(), Carbon::now()->addDays(30)])->count();
-            return view('dashboard.index',compact('total','low','expiring'));
+        if (Auth::user()->role === 'admin') {
+            return redirect()->route('admin.dashboard');
         }
 
-        // For regular users: show their medicine intakes
         $user = Auth::user();
         $intakes = MedicineIntake::with('medicine')
             ->where('user_id', $user->user_id)
@@ -31,9 +31,14 @@ class DashboardController extends Controller
         return view('dashboard.user', compact('intakes'));
     }
 
-    // Confirm intake action
     public function confirmIntake(Request $request, $id)
     {
+        $sessionToken = $request->session()->token();
+        $requestToken = $request->input('_token') ?? $request->header('X-CSRF-TOKEN');
+        if (!is_string($requestToken) || !hash_equals($sessionToken, $requestToken)) {
+            return redirect()->route('login')->with('error', 'Session invalid or expired. Please refresh and try again.');
+        }
+
         $user = Auth::user();
         $intake = MedicineIntake::with('medicine')->where('id', $id)->where('user_id', $user->user_id)->firstOrFail();
 
@@ -75,6 +80,13 @@ class DashboardController extends Controller
     // Patient returns medicine from a scheduled intake
     public function returnIntake(Request $request, $id)
     {
+        // Validate CSRF token explicitly (session token vs request token/header)
+        $sessionToken = $request->session()->token();
+        $requestToken = $request->input('_token') ?? $request->header('X-CSRF-TOKEN');
+        if (!is_string($requestToken) || !hash_equals($sessionToken, $requestToken)) {
+            return redirect()->route('login')->with('error', 'Session invalid or expired. Please refresh and try again.');
+        }
+
         $user = Auth::user();
         $intake = MedicineIntake::with('medicine')->where('id', $id)->where('user_id', $user->user_id)->firstOrFail();
 
