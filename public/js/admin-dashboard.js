@@ -15,8 +15,11 @@ document.addEventListener("DOMContentLoaded", function() {
     return '#28a745';
   });
 
-  const medChart = new Chart(medCtx, {
-    type: 'bar',
+  // Initialize medicine chart only when element exists and there is data
+  let medChart = null;
+  if (medCtx && medicineNames.length) {
+    medChart = new Chart(medCtx, {
+      type: 'bar',
 
     
     data: {
@@ -59,31 +62,31 @@ document.addEventListener("DOMContentLoaded", function() {
         }
       }
     }
-  });
+    });
+  } else if (medCtx && !medicineNames.length) {
+    // show a friendly empty state when no data
+    medCtx.parentElement.innerHTML = '<div class="empty-state">No medicine data available.</div>';
+  }
 
-  new DataTable('#LowMedicine', {
-    searchable: true,
-    fixedHeight: true,
-    perPage: 5,
-    perPageSelect: [5, 10, 15, 20],
-  });
+  // Safe DataTable initializers (only if element exists)
+  function safeInitDataTable(selector, opts) {
+    try {
+      const el = document.querySelector(selector);
+      if (!el) return;
+      new DataTable(selector, Object.assign({ searchable: true, fixedHeight: true }, opts || {}));
+    } catch (e) {
+      console.warn('DataTable init failed for', selector, e);
+    }
+  }
 
-  new DataTable('#MedicineList', {
-    searchable: true,
-    fixedHeight: true,
-    perPage: 10,
-    perPageSelect: [10, 25, 50, 100],
-  });
-  new DataTable('#UserTable', {
-    searchable: true,
-    fixedHeight: true,
-    perPage: 10,
-    perPageSelect: [10, 25, 50, 100],
-  });
+  safeInitDataTable('#LowMedicine', { perPage: 5, perPageSelect: [5, 10, 15, 20] });
+  safeInitDataTable('#MedicineList', { perPage: 10, perPageSelect: [10, 25, 50, 100] });
+  safeInitDataTable('#UserTable', { perPage: 10, perPageSelect: [10, 25, 50, 100] });
   
   // LOW STOCK CHART - Animated bars with emphasis
   const lowCtx = document.getElementById('lowStockChart');
-  new Chart(lowCtx, {
+  if (lowCtx && lowStockNames.length) {
+    new Chart(lowCtx, {
     type: 'bar',
     data: {
       labels: lowStockNames,
@@ -112,7 +115,10 @@ document.addEventListener("DOMContentLoaded", function() {
         y: { beginAtZero: true, title: { display: true, text: 'Quantity' } }
       }
     }
-  });
+    });
+  } else if (lowCtx && !lowStockNames.length) {
+    lowCtx.parentElement.innerHTML = '<div class="empty-state">No low stock data.</div>';
+  }
 
   // EXPIRY CHART - medicines expiring within the next 10 days
   const expiryCtx = document.getElementById('expiryChart');
@@ -153,5 +159,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
       }
     });
+  } else if (expiryCtx && !nearExpiryNames.length) {
+    expiryCtx.parentElement.innerHTML = '<div class="empty-state">No near-expiry medicines.</div>';
   }
 });

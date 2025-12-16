@@ -4,7 +4,7 @@ body {
     height: 100vh;
     width: 100vw;
     font-family: "Poppins", sans-serif;
-    background: #f1f1f1; /* removed background image */
+    background: #f1f1f1; 
 }
 
 .glass-container,
@@ -17,21 +17,26 @@ body {
 }
 
 .login-card,
+
+
 .register-card {
-    background: #ffffff; /* solid white */
-    background: rgba(255, 255, 255, 0.9); /* slight dark white */
+    background: #ffffff; 
+    background: rgba(255, 255, 255, 0.9);
     
-    /* remove glass */
+  
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
 
     width: 450px;
-    padding: 35px;
+    padding: 40px;
+
+    position: relative;
+    overflow: hidden;
 
     border-radius: 20px;
-    border: 1px solid #dcdcdc;  /* light gray border */
+    border: 1px solid rgba(29,53,87,0.08);
 
-    box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: 0px 10px 30px rgba(29,53,87,0.09);
     animation: fadeIn 0.7s ease;
 }
 
@@ -41,8 +46,8 @@ body {
 
 .health-logo,
 .meditrack-logo {
-    width: 110px;
-    height: auto;
+    width: 400px;
+    height: 150px;
     margin-bottom: 15px;
     filter: drop-shadow(0px 3px 4px rgba(0, 0, 0, 0.3));
 }
@@ -134,5 +139,63 @@ label {
     background: rgba(0, 128, 0, 0.15);
     border-left: 4px solid #007000;
     color: #005000;
+}
+
+/* Additional lively styles for login */
+.logo-wrapper { display:flex; justify-content:center; margin-bottom:10px; }
+.logo-circle{
+    width:72px;
+    height:72px;
+    border-radius:50%;
+    background: linear-gradient(135deg,#2b7a78 0%, #1d3557 100%);
+    display:flex; align-items:center; justify-content:center;
+    color:white; font-weight:800; font-size:22px;
+    box-shadow: 0 8px 20px rgba(45, 85, 120, 0.18);
+    transform: translateY(-4px);
+}
+.subtitle{
+    color: #4b5b6b;
+    margin-top: -2px;
+    margin-bottom: 14px;
+    font-size: 13px;
+}
+
+.login-card:before{
+    content: "";
+    position:absolute; left:-60px; top:-60px; width:220px; height:220px;
+    background: radial-gradient(circle at 30% 30%, rgba(29,53,87,0.06), transparent 30%);
+    transform: rotate(12deg);
+}
+
+.form-group{ margin-bottom: 18px; }
+
+.form-control{
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-size: 15px;
+    border: 1px solid #d1d7dd;
+    transition: box-shadow 0.18s ease, transform 0.12s ease;
+}
+.form-control::placeholder{ color:#9aa6b2; }
+.form-control:focus{
+    border-color: #1d3557;
+    box-shadow: 0 6px 18px rgba(29,53,87,0.12);
+    transform: translateY(-1px);
+}
+
+.login-btn{
+    background: linear-gradient(90deg,#1d3557 0%, #2b7a78 100%);
+    color: #fff;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 12px;
+    box-shadow: 0 8px 22px rgba(29,53,87,0.14);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+}
+.login-btn:hover{ transform: translateY(-3px); box-shadow: 0 12px 30px rgba(29,53,87,0.18); opacity:0.98 }
+
+@media (max-width:600px){
+    .login-card{ width:100%; padding:26px; border-radius:16px; }
+    .logo-circle{ width:60px; height:60px; font-size:20px }
 }
 

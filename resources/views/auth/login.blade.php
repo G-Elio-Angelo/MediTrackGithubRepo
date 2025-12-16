@@ -8,9 +8,11 @@
     <div class="login-card">
 
         <div class="logo-wrapper">
+            <img src="{{ asset('images/meditrack-logo.png') }}" alt="MediTrack" class="meditrack-logo">
         </div>
 
-        <h3 class="mb-3 text-center health-title">MediTrack Login</h3>
+        <h3 class="mb-3 text-center health-title">MediTrack System Login</h3>
+        <p class="subtitle text-center">Your personal medicine tracker</p>
 
         @if($errors->any())
             <div class="alert alert-danger-custom">
@@ -34,8 +36,7 @@
             </div>
 
             <div class="d-grid">
-                <button type="submit" class="btn btn-primary btn-lg"
-                        style="background-color:#1d3557; border:none;">
+                <button type="submit" class="btn btn-primary btn-lg login-btn">
                     Login
                 </button>
             </div>

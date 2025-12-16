@@ -1,0 +1,318 @@
+================================================================================
+                        MEDITRACK INSTALLATION GUIDE
+                      Medical Tracking Management System
+                              Laravel 12.x + PHP 8.2
+================================================================================
+
+PREPARED BY: Group 7
+DATE: December 2025
+
+================================================================================
+                              PREREQUISITES
+================================================================================
+
+Before installation, ensure the following software is installed:
+
+1.  XAMPP v8.2 or higher
+   - Download: https://www.apachefriends.org
+   - Required Components: Apache, MySQL, PHP 8.2+
+
+2.  Composer (PHP Dependency Manager)
+   - Download: https://getcomposer.org/download/
+   - Verify installation: Open terminal and run: composer --version
+
+3. Web Browser
+   - Chrome, Firefox, or Edge (latest version)
+
+4. Internet Connection
+   - Required for: SendGrid Email features, package downloads
+
+================================================================================
+                          STEP-BY-STEP INSTALLATION
+================================================================================
+
+--------------------------------------------------------------------------------
+STEP 1: XAMPP SETUP
+--------------------------------------------------------------------------------
+1. Download XAMPP v8.2+ from https://www.apachefriends.org
+2. Run the installer and follow the prompts
+3. Install to default location: C:\xampp
+4. After installation, open XAMPP Control Panel
+5. Start Apache and MySQL services (click "Start" buttons)
+
+--------------------------------------------------------------------------------
+STEP 2: PROJECT FILES SETUP
+--------------------------------------------------------------------------------
+1. Extract the submitted ZIP file
+2. Copy the "MediTrack" folder to: C:\xampp\htdocs\
+3. Final path should be: C:\xampp\htdocs\MediTrack\
+
+   Verify folder structure:
+   C:\xampp\htdocs\MediTrack\
+   ├── app\
+   ├── bootstrap\
+   ├── config\
+   ├── database\
+   ├── public\
+   ├── resources\
+   ├── routes\
+   ├── storage\
+   ├── tests\
+   ├── . env.example
+   ├── artisan
+   ├── composer.json
+   └── ...  (other files)
+
+--------------------------------------------------------------------------------
+STEP 3: ENVIRONMENT CONFIGURATION
+--------------------------------------------------------------------------------
+1. Navigate to the project folder: C:\xampp\htdocs\MediTrack\
+2. Copy . env.example and rename it to .env
+3.  Open .env file and configure the following settings:
+
+   APP_NAME=MediTrack
+   APP_ENV=local
+   APP_KEY=
+   APP_DEBUG=true
+   APP_URL=http://localhost:8000
+
+   For SQLite (Default - No additional setup):
+   DB_CONNECTION=sqlite
+
+   For MySQL (Optional):
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0. 1
+   DB_PORT=3306
+   DB_DATABASE=meditrack
+   DB_USERNAME=root
+   DB_PASSWORD=
+
+   (DB_PASSWORD is empty - XAMPP default has no password)
+
+--------------------------------------------------------------------------------
+STEP 4: INSTALL DEPENDENCIES
+--------------------------------------------------------------------------------
+1. Open Command Prompt or PowerShell
+2.  Navigate to project folder:
+
+   cd C:\xampp\htdocs\MediTrack
+
+3. Install all PHP packages:
+
+   composer install
+
+   (Wait 2-5 minutes for download to complete)
+
+--------------------------------------------------------------------------------
+STEP 5: APPLICATION SETUP
+--------------------------------------------------------------------------------
+After composer install completes, run the following commands:
+
+1. Generate application key:
+
+   php artisan key:generate
+
+2.  Run database migrations:
+
+   php artisan migrate
+
+   ┌─────────────────────────────────────────────────────────────────────────┐
+   │  If using SQLite and prompted:                                          │
+   │  "The database 'database. sqlite' does not exist."                       │
+   │  Type: yes                                                              │
+   │  Press Enter                                                            │
+   │                                                                         │
+   │  Laravel will automatically:                                            │
+   │  ✓ Create the SQLite database file                                      │
+   │  ✓ Create all required tables                                           │
+   └─────────────────────────────────────────────────────────────────────────┘
+
+   ┌─────────────────────────────────────────────────────────────────────────┐
+   │  If using MySQL, create database first:                                 │
+   │                                                                         │
+   │  1. Open browser: http://localhost/phpmyadmin                           │
+   │  2. Click "New" on the left sidebar                                     │
+   │  3. Database name: meditrack                                            │
+   │  4.  Collation: utf8mb4_general_ci                                       │
+   │  5. Click "Create"                                                      │
+   │  6. Then run: php artisan migrate                                       │
+   └─────────────────────────────────────────────────────────────────────────┘
+
+3. Clear cached configurations:
+
+   php artisan config:clear
+   php artisan cache:clear
+   php artisan view:clear
+
+--------------------------------------------------------------------------------
+STEP 6: CREATE DEFAULT ACCOUNTS (Optional)
+--------------------------------------------------------------------------------
+If seeders are configured, run the database seeder:
+
+   php artisan db:seed
+
+This will create default user accounts for testing. 
+
+--------------------------------------------------------------------------------
+STEP 7: START THE APPLICATION
+--------------------------------------------------------------------------------
+1. In Command Prompt/PowerShell, run:
+
+   php artisan serve
+
+2. You should see:
+   "Starting Laravel development server: http://127.0.0. 1:8000"
+
+3. Open your web browser
+4. Go to: http://localhost:8000
+
+================================================================================
+                            ACCESS POINTS
+================================================================================
+
+1. Main Application:
+   http://localhost:8000
+
+2. phpMyAdmin (Database Management):
+   http://localhost/phpmyadmin
+
+================================================================================
+                            SYSTEM FEATURES
+================================================================================
+
+MediTrack includes the following capabilities:
+
+1. Medical Record Tracking
+   - Patient information management
+   - Medical history tracking
+
+2.  Email Notifications
+   - SendGrid API integration for email features
+   - Configurable email templates
+
+3. PDF Generation
+   - DomPDF integration for report generation
+   - Exportable medical records
+
+================================================================================
+                        COMMON ISSUES & SOLUTIONS
+================================================================================
+
+--------------------------------------------------------------------------------
+ISSUE 1: "php" is not recognized as a command
+--------------------------------------------------------------------------------
+Solution:
+   - Add PHP to system PATH
+   - Or use full path: C:\xampp\php\php. exe artisan serve
+
+--------------------------------------------------------------------------------
+ISSUE 2: "composer" is not recognized as a command
+--------------------------------------------------------------------------------
+Solution:
+   - Install Composer from https://getcomposer.org/download/
+   - Restart Command Prompt after installation
+
+--------------------------------------------------------------------------------
+ISSUE 3: Database connection error
+--------------------------------------------------------------------------------
+Solution:
+   - Ensure MySQL is running in XAMPP Control Panel
+   - Verify . env file has correct settings
+   - For SQLite: Ensure database/database.sqlite file exists
+
+--------------------------------------------------------------------------------
+ISSUE 4: "Class not found" or autoload error
+--------------------------------------------------------------------------------
+Solution:
+   - Run: composer install
+   - Run: composer dump-autoload
+
+--------------------------------------------------------------------------------
+ISSUE 5: 500 Internal Server Error
+--------------------------------------------------------------------------------
+Solution:
+   - Run: php artisan key:generate
+   - Run: php artisan config:clear
+   - Run: php artisan cache:clear
+   - Check storage folder permissions
+
+--------------------------------------------------------------------------------
+ISSUE 6: Styles/CSS not loading properly
+--------------------------------------------------------------------------------
+Solution:
+   - Clear browser cache (Ctrl + Shift + R)
+   - Run: php artisan view:clear
+
+--------------------------------------------------------------------------------
+ISSUE 7: Port 8000 already in use
+--------------------------------------------------------------------------------
+Solution:
+   - Use different port: php artisan serve --port=8080
+   - Then access: http://localhost:8080
+
+================================================================================
+                          QUICK COMMAND REFERENCE
+================================================================================
+
+Navigate to project folder:
+   cd C:\xampp\htdocs\MediTrack
+
+Install dependencies:
+   composer install
+
+Generate application key:
+   php artisan key:generate
+
+Create database & tables:
+   php artisan migrate
+
+Create default accounts:
+   php artisan db:seed
+
+Start the server:
+   php artisan serve
+
+Run tests:
+   php artisan test
+
+Clear all caches:
+   php artisan config:clear
+   php artisan cache:clear
+   php artisan view:clear
+
+One-liner setup (after . env is configured):
+   composer install && php artisan key:generate && php artisan migrate && php artisan db:seed && php artisan serve
+
+================================================================================
+                            TECHNOLOGY STACK
+================================================================================
+
+Backend:
+   - Laravel 12. x (PHP Framework)
+   - PHP 8.2
+
+Frontend:
+   - Blade Templates (Laravel templating)
+   - CSS
+
+Database:
+   - SQLite (default) or MySQL (via XAMPP)
+
+Packages (via Composer):
+   - sendgrid/sendgrid (Email notifications)
+   - dompdf/dompdf (PDF generation)
+   - laravel/tinker (REPL for debugging)
+
+================================================================================
+                            GROUP MEMBERS
+================================================================================
+
+1. Carandang, John Angelo A.
+
+2. Mergildo, Samantha Nicole
+3. Miranda, Germain 
+
+4. Silva, Edlex
+================================================================================
+                           END OF INSTALLATION GUIDE
+================================================================================

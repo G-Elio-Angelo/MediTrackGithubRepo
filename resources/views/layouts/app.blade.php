@@ -11,12 +11,10 @@
   <!-- DataTables CSS -->
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
-  {{-- Custom CSS --}}
-  <!-- <link rel="stylesheet" href="{{ asset('css/style.css') }}"> -->
 </head>
 
 <body>
-  <main class="py-4">
+  <main>
     @yield('content')
   </main>
 
